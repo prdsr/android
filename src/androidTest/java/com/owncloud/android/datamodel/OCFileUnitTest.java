@@ -91,7 +91,6 @@ public class OCFileUnitTest {
         mFile.setPublicLink(PUBLIC_LINK);
         mFile.setPermissions(PERMISSIONS);
         mFile.setRemoteId(REMOTE_ID);
-        mFile.setNeedsUpdateThumbnail(true);
         mFile.setDownloading(true);
         mFile.setEtagInConflict(ETAG_IN_CONFLICT);
 
