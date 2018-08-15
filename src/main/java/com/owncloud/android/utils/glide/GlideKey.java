@@ -36,7 +36,9 @@ public class GlideKey {
     static final String THUMBNAIL_KEY = "THUMBNAIL_";
     static final String RESIZED_IMAGE_KEY = "RESIZED_IMAGE_";
 
-    private GlideKey() {}
+    private GlideKey() {
+        // Required empty constructor
+    }
 
     public static ObjectKey serverThumbnail(OCFile file) {
         return new ObjectKey(THUMBNAIL_KEY + file.getEtagOnServer());
