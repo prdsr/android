@@ -9,8 +9,6 @@ import com.owncloud.android.datamodel.OCFile;
 import java.io.InputStream;
 
 public class OCFileModelLoader implements ModelLoader<GlideOcFile, InputStream> {
-    private static final String TAG = OCFileModelLoader.class.getSimpleName();
-
     @Override
     public boolean handles(@NonNull GlideOcFile model) {
         return true;

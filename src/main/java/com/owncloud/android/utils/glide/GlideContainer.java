@@ -4,7 +4,7 @@ import com.bumptech.glide.signature.ObjectKey;
 import com.owncloud.android.lib.common.OwnCloudClient;
 
 public class GlideContainer {
-    public OwnCloudClient client = null;
+    public OwnCloudClient client;
     public ObjectKey key;
-    public String url = null;
+    public String url;
 }

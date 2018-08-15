@@ -745,14 +745,11 @@ public class FileOperationsHelper {
                         .load(container)
                         .submit(pxW, pxH)
                         .get(); // needs to be called on background thread
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
+            } catch (InterruptedException | ExecutionException e) {
+                Log_OC.e(TAG, "Error generating image", e);
             }
 
             Context context = MainApp.getAppContext();
-
 
             return FileProvider.getUriForFile(context,
                     context.getResources().getString(R.string.file_provider_authority), cachedImage);

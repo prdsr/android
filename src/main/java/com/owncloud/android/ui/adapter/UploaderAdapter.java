@@ -41,8 +41,6 @@ import java.util.List;
 import java.util.Map;
 
 public class UploaderAdapter extends SimpleAdapter {
-    private static final String TAG = UploaderAdapter.class.getSimpleName();
-    
     private Context mContext;
     private Account mAccount;
     private LayoutInflater inflater;
