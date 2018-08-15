@@ -733,11 +733,7 @@ public class FileOperationsHelper {
 
             try {
                 GlideContainer container = new GlideContainer();
-
-                container.url = null;
                 container.key = GlideKey.resizedImage(file);
-                container.client = null;
-
 
                 Point p = DisplayUtils.getScreenDimension();
                 int pxW = p.x;

@@ -28,7 +28,8 @@ import com.bumptech.glide.signature.ObjectKey;
 
 import java.io.InputStream;
 
-import static com.owncloud.android.utils.glide.GlideKey.THUMBNAIL;
+import static com.owncloud.android.utils.glide.GlideKey.RESIZED_IMAGE_KEY;
+import static com.owncloud.android.utils.glide.GlideKey.THUMBNAIL_KEY;
 
 /**
  * Custom Model for OwnCloudClient
@@ -44,6 +45,6 @@ public class GlideContainerStreamLoader implements ModelLoader<GlideContainer, I
 
     @Override
     public boolean handles(@NonNull GlideContainer s) {
-        return !s.key.equals(new ObjectKey(THUMBNAIL));
+        return !s.key.equals(new ObjectKey(THUMBNAIL_KEY)) && !s.key.equals(new ObjectKey(RESIZED_IMAGE_KEY));
     }
 }

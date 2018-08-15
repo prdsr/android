@@ -533,7 +533,7 @@ public class DisplayUtils {
                 arbitraryDataProvider = new ArbitraryDataProvider(context.getContentResolver());
                 String serverName = account.name.substring(account.name.lastIndexOf('@') + 1, account.name.length());
                 accountName = userId + "@" + serverName;
-                String eTag = arbitraryDataProvider.getValue(accountName, GlideKey.AVATAR);
+                String eTag = arbitraryDataProvider.getValue(accountName, GlideKey.AVATAR_KEY);
                 Log_OC.d(TAG, "glide: old etag: " + eTag);
 
                 try {
@@ -559,7 +559,7 @@ public class DisplayUtils {
                             if (get.getResponseHeader(ETAG) != null) {
                                 String newETag = get.getResponseHeader(ETAG).getValue().replace("\"", "");
                                 Log_OC.d(TAG, "glide: new etag: " + newETag);
-                                arbitraryDataProvider.storeOrUpdateKeyValue(accountName, GlideKey.AVATAR, newETag);
+                                arbitraryDataProvider.storeOrUpdateKeyValue(accountName, GlideKey.AVATAR_KEY, newETag);
                             }
                             break;
 
@@ -616,7 +616,7 @@ public class DisplayUtils {
                 } catch (Exception e) {
                     Log_OC.e(TAG, "Avatar generation failed", e);
                     // reset eTag
-                    arbitraryDataProvider.storeOrUpdateKeyValue(accountName, GlideKey.AVATAR, "");
+                    arbitraryDataProvider.storeOrUpdateKeyValue(accountName, GlideKey.AVATAR_KEY, "");
                     // context may be null
                 }
             }

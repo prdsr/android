@@ -20,14 +20,13 @@ public class AvatarFetcher implements DataFetcher<InputStream> {
         callback.onDataReady(avatar.getInputStream());
     }
 
-    @Override
     public void cleanup() {
-
+        // not needed
     }
 
     @Override
     public void cancel() {
-
+        // not needed
     }
 
     @NonNull

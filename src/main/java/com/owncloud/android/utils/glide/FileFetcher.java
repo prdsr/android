@@ -39,7 +39,7 @@ public class FileFetcher implements DataFetcher<InputStream> {
             try {
                 data.close();
             } catch (IOException e) {
-                // Ignored.
+                // ignore
             }
         }
     }
