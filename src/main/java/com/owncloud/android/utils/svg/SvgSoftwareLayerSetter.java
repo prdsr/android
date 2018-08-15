@@ -10,6 +10,7 @@
  */
 package com.owncloud.android.utils.svg;
 
+import android.graphics.drawable.PictureDrawable;
 import android.support.annotation.Nullable;
 import android.widget.ImageView;
 
@@ -19,7 +20,12 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.ImageViewTarget;
 import com.bumptech.glide.request.target.Target;
 
-public class SvgSoftwareLayerSetter<PictureDrawable> implements RequestListener<PictureDrawable> {
+/**
+ * Listener which updates the {@link ImageView} to be software rendered, because
+ * {@link com.caverock.androidsvg.SVG SVG}/{@link android.graphics.Picture Picture} can't render on
+ * a hardware backed {@link android.graphics.Canvas Canvas}.
+ */
+public class SvgSoftwareLayerSetter implements RequestListener<PictureDrawable> {
     @Override
     public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<PictureDrawable> target,
                                 boolean isFirstResource) {
