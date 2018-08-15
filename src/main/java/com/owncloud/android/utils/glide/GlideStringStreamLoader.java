@@ -1,4 +1,4 @@
-/**
+/*
  * Nextcloud Android client application
  *
  * @author Alejandro Bautista
@@ -29,9 +29,8 @@ import com.bumptech.glide.signature.ObjectKey;
 import java.io.InputStream;
 
 /**
- * Custom Model for OwnCloudClient
+ * Custom model for Nextcloud client
  */
-
 public class GlideStringStreamLoader implements ModelLoader<String, InputStream> {
     @Nullable
     @Override
