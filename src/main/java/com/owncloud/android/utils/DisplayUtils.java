@@ -64,6 +64,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.target.Target;
+import com.bumptech.glide.signature.ObjectKey;
 import com.owncloud.android.MainApp;
 import com.owncloud.android.R;
 import com.owncloud.android.authentication.AccountUtils;
@@ -753,7 +754,7 @@ public class DisplayUtils {
     }
 
     public static void downloadImage(String uri, int placeholder, int error, ImageView view, OwnCloudClient client,
-                                     Key key, Context context) {
+                                     ObjectKey key, Context context) {
         GlideContainer container = new GlideContainer();
 
         container.url = uri;

@@ -24,8 +24,11 @@ import android.support.annotation.Nullable;
 
 import com.bumptech.glide.load.Options;
 import com.bumptech.glide.load.model.ModelLoader;
+import com.bumptech.glide.signature.ObjectKey;
 
 import java.io.InputStream;
+
+import static com.owncloud.android.utils.glide.GlideKey.THUMBNAIL;
 
 /**
  * Custom Model for OwnCloudClient
@@ -41,6 +44,6 @@ public class GlideContainerStreamLoader implements ModelLoader<GlideContainer, I
 
     @Override
     public boolean handles(@NonNull GlideContainer s) {
-        return true;
+        return !s.key.equals(new ObjectKey(THUMBNAIL));
     }
 }

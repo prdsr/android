@@ -12,7 +12,7 @@ import java.io.File;
 
 public class GlideKey {
     public static final String AVATAR = "AVATAR";
-    private static final String THUMBNAIL = "THUMBNAIL_";
+    static final String THUMBNAIL = "THUMBNAIL_";
     private static final String RESIZED_IMAGE = "RESIZED_IMAGE_";
 
     public static ObjectKey serverThumbnail(OCFile file) {
