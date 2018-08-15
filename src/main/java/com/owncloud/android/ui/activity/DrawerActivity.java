@@ -640,7 +640,7 @@ public abstract class DrawerActivity extends ToolbarActivity implements DisplayU
     private void repopulateAccountList(ArrayList<Account> accounts) {
         // remove all accounts from list
         mNavigationView.getMenu().removeGroup(R.id.drawer_menu_accounts);
-
+        SimpleTarget<Drawable> menuTarget;
         // add all accounts to list
         for (Account account: accounts) {
             try {
@@ -653,7 +653,7 @@ public abstract class DrawerActivity extends ToolbarActivity implements DisplayU
                             account.name)
                             .setIcon(TextDrawable.createAvatar(account.name, mMenuAccountAvatarRadiusDimension));
 
-                    SimpleTarget<Drawable> menuTarget = new SimpleTarget<Drawable>() {
+                    menuTarget = new SimpleTarget<Drawable>() {
                         @Override
                         public void onResourceReady(@NonNull Drawable resource,
                                                     @Nullable Transition<? super Drawable> transition) {
@@ -986,15 +986,15 @@ public abstract class DrawerActivity extends ToolbarActivity implements DisplayU
             mNavigationView.getMenu().removeGroup(R.id.drawer_menu_external_links);
 
             float density = getResources().getDisplayMetrics().density;
-            final int size = Math.round(24 * density);
             int greyColor = getResources().getColor(R.color.standard_grey);
+            MenuSimpleTarget<Drawable> target;
 
             for (final ExternalLink link : externalLinksProvider.getExternalLink(ExternalLinkType.LINK)) {
                 int id = mNavigationView.getMenu().add(R.id.drawer_menu_external_links,
                         MENU_ITEM_EXTERNAL_LINK + link.id, MENU_ORDER_EXTERNAL_LINKS, link.name)
                         .setCheckable(true).getItemId();
 
-                MenuSimpleTarget<Drawable> target = new MenuSimpleTarget<Drawable>(id) {
+                target = new MenuSimpleTarget<Drawable>(id) {
                     @Override
                     public void onResourceReady(@NonNull Drawable resource,
                                                 @Nullable Transition<? super Drawable> transition) {
