@@ -517,7 +517,7 @@ public class DisplayUtils {
         
         AsyncTask task = new AsyncTask<Object, Void, InputStream>() {
 
-            GetMethod get = null;
+            GetMethod get;
             ArbitraryDataProvider arbitraryDataProvider;
             String accountName;
 
