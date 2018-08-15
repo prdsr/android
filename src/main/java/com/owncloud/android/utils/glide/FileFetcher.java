@@ -67,7 +67,7 @@ public class FileFetcher implements DataFetcher<InputStream> {
 
     @Override
     public void cancel() {
-
+        // unused
     }
 
     @NonNull
