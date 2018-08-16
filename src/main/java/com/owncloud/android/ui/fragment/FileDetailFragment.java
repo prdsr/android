@@ -566,7 +566,6 @@ public class FileDetailFragment extends FileFragment implements OnClickListener 
      * @param file a {@link OCFile} to be previewed
      */
     private void setFilePreview(OCFile file) {
-        Bitmap resizedImage;
 
         if (MimeTypeUtil.isImage(file) && activity != null && activity.getPreviewImageView() != null) {
             try {
