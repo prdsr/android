@@ -31,7 +31,7 @@ import com.owncloud.android.lib.resources.files.TrashbinFile;
 
 import java.io.File;
 
-public class GlideKey {
+public final class GlideKey {
     public static final String AVATAR_KEY = "AVATAR";
     static final String THUMBNAIL_KEY = "THUMBNAIL_";
     static final String RESIZED_IMAGE_KEY = "RESIZED_IMAGE_";

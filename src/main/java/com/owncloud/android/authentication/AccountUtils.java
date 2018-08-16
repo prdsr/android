@@ -38,7 +38,7 @@ import com.owncloud.android.lib.resources.status.OwnCloudVersion;
 import com.owncloud.android.ui.activity.ManageAccountsActivity;
 
 
-public class AccountUtils {
+public final class AccountUtils {
     private static final String PREF_SELECT_OC_ACCOUNT = "select_oc_account";
 
     public static final int ACCOUNT_VERSION = 1;
