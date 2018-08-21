@@ -59,6 +59,7 @@ public class HttpStreamGlideContainerFetcher implements DataFetcher<InputStream>
                 callback.onDataReady(get.getResponseBodyAsStream());
             } else {
                 container.client.exhaustResponse(get.getResponseBodyAsStream());
+                callback.onLoadFailed(new Exception("Thumbnail failed"));
             }
         } catch (Exception e) {
             Log_OC.e(TAG, e.getMessage(), e);

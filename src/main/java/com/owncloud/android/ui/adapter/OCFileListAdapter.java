@@ -26,9 +26,11 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -39,6 +41,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.owncloud.android.R;
 import com.owncloud.android.authentication.AccountUtils;
 import com.owncloud.android.datamodel.FileDataStorageManager;
@@ -255,7 +259,7 @@ public class OCFileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
             boolean gridImage = MimeTypeUtil.isImage(file) || MimeTypeUtil.isVideo(file);
 
-            setThumbnail(file, gridViewHolder.thumbnail);
+            setThumbnail(file, gridViewHolder);
 
             if (MimeTypeUtil.isVideo(file)) {
                 gridViewHolder.playIcon.setVisibility(View.VISIBLE);
@@ -356,7 +360,9 @@ public class OCFileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         }
     }
 
-    private void setThumbnail(OCFile file, ImageView thumbnailView) {
+    private void setThumbnail(OCFile file, OCFileListGridImageViewHolder gridImageViewHolder) {
+        ImageView thumbnailView = gridImageViewHolder.thumbnail;
+        
         if (file.isFolder()) {
             thumbnailView.setImageDrawable(MimeTypeUtil.getFolderTypeIcon(file.isSharedWithMe() ||
                             file.isSharedWithSharee(), file.isSharedViaLink(), file.isEncrypted(), file.getMountType(),
@@ -367,8 +373,23 @@ public class OCFileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 if (client == null) {
                     client = AccountUtils.getClientForCurrentAccount(mContext);
                 }
-                
-                DisplayUtils.downloadThumbnail(file, thumbnailView, client, mContext);
+
+                SimpleTarget thumbnailTarget = new SimpleTarget<Drawable>() {
+                    @Override
+                    public void onResourceReady(@NonNull Drawable resource,
+                                                @Nullable Transition<? super Drawable> transition) {
+                        thumbnailView.setImageDrawable(resource);
+                    }
+
+                    @Override
+                    public void onLoadFailed(@Nullable Drawable errorDrawable) {
+                        int placeholder = MimeTypeUtil.isVideo(file) ? R.drawable.file_movie : R.drawable.file_image;
+                        thumbnailView.setImageResource(placeholder);
+                        gridImageViewHolder.playIcon.setVisibility(View.GONE);
+                    }
+                };
+
+                DisplayUtils.downloadThumbnail(file, thumbnailTarget, client, mContext);
 
                 if ("image/png".equalsIgnoreCase(file.getMimeType())) {
                     thumbnailView.setBackgroundColor(mContext.getResources().getColor(R.color.background_color));

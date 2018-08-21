@@ -693,7 +693,7 @@ public class DisplayUtils {
                 .into(view);
     }
 
-    public static void downloadThumbnail(OCFile file, ImageView view, OwnCloudClient client, Context context) {
+    public static void downloadThumbnail(OCFile file, Object view, OwnCloudClient client, Context context) {
         GlideContainer container = new GlideContainer();
 
         int placeholder = MimeTypeUtil.isVideo(file) ? R.drawable.file_movie : R.drawable.file_image;
@@ -705,10 +705,18 @@ public class DisplayUtils {
         container.client = client;
         container.key = GlideKey.serverThumbnail(file);
 
+        if (view instanceof ImageView) {
+            GlideApp.with(context)
+                    .load(container)
+                    .placeholder(placeholder)
+                    .error(placeholder)
+                    .into((ImageView) view);
+        }
         GlideApp.with(context)
                 .load(container)
                 .placeholder(placeholder)
-                .into(view);
+                .error(placeholder)
+                .into((SimpleTarget<Drawable>) view);
     }
 
     public static void downloadActivityThumbnail(OCFile file, ImageView view, OwnCloudClient client, Context context) {
