@@ -283,6 +283,8 @@ public class FileOperationsHelper {
                                     }
                                 }
 
+                                openFileWithIntent.setFlags(openFileWithIntent.getFlags() |
+                                        Intent.FLAG_ACTIVITY_NEW_TASK);
                                 mFileActivity.startActivity(
                                         Intent.createChooser(
                                                 openFileWithIntent,
@@ -341,7 +343,7 @@ public class FileOperationsHelper {
         return openFileWithIntent;
     }
 
-    private Uri getFileUri(OCFile file, String[] officeExtensions) {
+    private Uri getFileUri(OCFile file, String... officeExtensions) {
         if (file.getFileName().contains(".") &&
                 Arrays.asList(officeExtensions).contains(file.getFileName().substring(file.getFileName().
                         lastIndexOf(".") + 1, file.getFileName().length())) &&
@@ -778,7 +780,7 @@ public class FileOperationsHelper {
     public void toggleFavoriteFiles(Collection<OCFile> files, boolean shouldBeFavorite) {
         List<OCFile> alreadyRightStateList = new ArrayList<>();
         for (OCFile file : files) {
-            if (file.getIsFavorite() == shouldBeFavorite) {
+            if (file.isFavorite() == shouldBeFavorite) {
                 alreadyRightStateList.add(file);
             }
         }
@@ -791,7 +793,7 @@ public class FileOperationsHelper {
     }
 
     public void toggleFavoriteFile(OCFile file, boolean shouldBeFavorite) {
-        if (file.getIsFavorite() != shouldBeFavorite) {
+        if (file.isFavorite() != shouldBeFavorite) {
             EventBus.getDefault().post(new FavoriteEvent(file.getRemotePath(), shouldBeFavorite, file.getRemoteId()));
         }
     }

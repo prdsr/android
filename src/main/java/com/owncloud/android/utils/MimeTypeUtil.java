@@ -1,4 +1,4 @@
-/**
+/*
  * ownCloud Android client application
  * <p>
  * Copyright (C) 2016 ownCloud Inc.
@@ -64,7 +64,7 @@ import javax.annotation.Nullable;
  * </ol>
  */
 @SuppressWarnings("PMD.AvoidDuplicateLiterals")
-public class MimeTypeUtil {
+public final class MimeTypeUtil {
     /** Mapping: icon for mime type */
     private static final Map<String, Integer> MIMETYPE_TO_ICON_MAPPING = new HashMap<>();
     /** Mapping: icon for main mime type (first part of a mime type declaration). */
@@ -76,6 +76,10 @@ public class MimeTypeUtil {
         populateFileExtensionMimeTypeMapping();
         populateMimeTypeIconMapping();
         populateMainMimeTypeMapping();
+    }
+
+    private MimeTypeUtil() {
+        // utility class -> private constructor
     }
 
     /**
@@ -196,29 +200,29 @@ public class MimeTypeUtil {
      * @return 'True' if the mime type defines image
      */
     public static boolean isImage(String mimeType) {
-        return (mimeType != null && mimeType.toLowerCase(Locale.ROOT).startsWith("image/") &&
-                !mimeType.toLowerCase(Locale.ROOT).contains("djvu"));
+        return mimeType != null && mimeType.toLowerCase(Locale.ROOT).startsWith("image/") &&
+                !mimeType.toLowerCase(Locale.ROOT).contains("djvu");
     }
 
     /**
      * @return 'True' the mime type defines video
      */
     public static boolean isVideo(String mimeType) {
-        return (mimeType != null && mimeType.toLowerCase(Locale.ROOT).startsWith("video/"));
+        return mimeType != null && mimeType.toLowerCase(Locale.ROOT).startsWith("video/");
     }
 
     /**
      * @return 'True' the mime type defines audio
      */
     public static boolean isAudio(String mimeType) {
-        return (mimeType != null && mimeType.toLowerCase(Locale.ROOT).startsWith("audio/"));
+        return mimeType != null && mimeType.toLowerCase(Locale.ROOT).startsWith("audio/");
     }
 
     /**
      * @return 'True' if mime type defines text
      */
     public static boolean isText(String mimeType) {
-        return (mimeType != null && mimeType.toLowerCase(Locale.ROOT).startsWith("text/"));
+        return mimeType != null && mimeType.toLowerCase(Locale.ROOT).startsWith("text/");
     }
 
     /**
@@ -273,8 +277,8 @@ public class MimeTypeUtil {
      * @return 'True' if the file contains an image
      */
     public static boolean isImage(ServerFileInterface file) {
-        return (MimeTypeUtil.isImage(file.getMimeType())
-                || MimeTypeUtil.isImage(getMimeTypeFromPath(file.getRemotePath())));
+        return MimeTypeUtil.isImage(file.getMimeType())
+                || MimeTypeUtil.isImage(getMimeTypeFromPath(file.getRemotePath()));
     }
 
     /**
@@ -540,8 +544,8 @@ public class MimeTypeUtil {
         FILE_EXTENSION_TO_MIMETYPE_MAPPING.put("flac", Collections.singletonList("audio/flac"));
         FILE_EXTENSION_TO_MIMETYPE_MAPPING.put("flv", Collections.singletonList("video/x-flv"));
         FILE_EXTENSION_TO_MIMETYPE_MAPPING.put("gif", Collections.singletonList("image/gif"));
-        FILE_EXTENSION_TO_MIMETYPE_MAPPING.put("gz", Collections.singletonList("application/x-gzip"));
-        FILE_EXTENSION_TO_MIMETYPE_MAPPING.put("gzip", Collections.singletonList("application/x-gzip"));
+        FILE_EXTENSION_TO_MIMETYPE_MAPPING.put("gz", Collections.singletonList("application/gzip"));
+        FILE_EXTENSION_TO_MIMETYPE_MAPPING.put("gzip", Collections.singletonList("application/gzip"));
         FILE_EXTENSION_TO_MIMETYPE_MAPPING.put("h", Collections.singletonList("text/x-h"));
         FILE_EXTENSION_TO_MIMETYPE_MAPPING.put("hh", Collections.singletonList("text/x-h"));
         FILE_EXTENSION_TO_MIMETYPE_MAPPING.put("html", Arrays.asList("text/html", "text/plain"));
@@ -627,7 +631,6 @@ public class MimeTypeUtil {
         FILE_EXTENSION_TO_MIMETYPE_MAPPING.put("svg", Arrays.asList("image/svg+xml", "text/plain"));
         FILE_EXTENSION_TO_MIMETYPE_MAPPING.put("swf", Arrays.asList("application/x-shockwave-flash", "application/octet-stream"));
         FILE_EXTENSION_TO_MIMETYPE_MAPPING.put("tar", Collections.singletonList("application/x-tar"));
-        FILE_EXTENSION_TO_MIMETYPE_MAPPING.put("gz", Collections.singletonList("application/x-compressed"));
         FILE_EXTENSION_TO_MIMETYPE_MAPPING.put("tex", Collections.singletonList("application/x-tex"));
         FILE_EXTENSION_TO_MIMETYPE_MAPPING.put("tgz", Collections.singletonList("application/x-compressed"));
         FILE_EXTENSION_TO_MIMETYPE_MAPPING.put("tiff", Collections.singletonList("image/tiff"));

@@ -3,9 +3,6 @@
     <string name="about_android">%1$s Android aplikazioa</string>
     <string name="about_version">%1$s bertsioa</string>
     <string name="actionbar_sync">Freskatu kontua</string>
-    <string name="actionbar_upload">Kargatu</string>
-    <string name="actionbar_upload_from_apps">Beste aplikazioen edukia</string>
-    <string name="actionbar_upload_files">Fitxategiak</string>
     <string name="actionbar_open_with">Ireki honekin</string>
     <string name="actionbar_mkdir">Karpeta berria</string>
     <string name="actionbar_settings">Ezarpenak</string>
@@ -34,7 +31,7 @@
     <string name="drawer_item_activities">Jarduerak</string>
     <string name="drawer_item_notifications">Jakinarazpenak</string>
     <string name="drawer_quota">%1$s %2$s-(e)tik erabilita</string>
-	<string name="prefs_category_general">Orokorra</string>
+    <string name="prefs_category_general">Orokorra</string>
     <string name="prefs_category_more">Gehiago</string>
     <string name="prefs_manage_accounts">Kudeatu kontuak</string>
     <string name="prefs_expert_mode">Modu aurreratua</string>
@@ -259,7 +256,6 @@ Mesedez, baimendu berriz</string>
     <string name="activity_chooser_send_file_title">Bidali</string>
 
     <string name="copy_link">Lotura kopiatu</string>
-    <string name="clipboard_text_copied">Arbelera kopiatua</string>
     <string name="forbidden_permissions_rename">fitxategia berrizendatzeko</string>
     <string name="forbidden_permissions_delete">fitxategia ezabatzeko</string>
     <string name="share_link_forbidden_permissions">fitxategia konpartitzeko</string>

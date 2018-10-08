@@ -50,10 +50,14 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Static methods to help in access to local file system.
  */
-public class FileStorageUtils {
+public final class FileStorageUtils {
     private static final String TAG = FileStorageUtils.class.getSimpleName();
 
     public static final String PATTERN_YYYY_MM = "yyyy/MM/";
+
+    private FileStorageUtils() {
+        // utility class -> private constructor
+    }
 
     /**
      * Get local owncloud storage path for accountName.
@@ -191,7 +195,7 @@ public class FileStorageUtils {
         file.setEtag(ocFile.getEtag());
         file.setPermissions(ocFile.getPermissions());
         file.setRemoteId(ocFile.getRemoteId());
-        file.setFavorite(ocFile.getIsFavorite());
+        file.setFavorite(ocFile.isFavorite());
         return file;
     }
 
@@ -276,6 +280,8 @@ public class FileStorageUtils {
         }
     }
 
+    @SuppressFBWarnings(value="OBL_UNSATISFIED_OBLIGATION_EXCEPTION_EDGE",
+            justification="False-positive on the output stream")
     public static boolean copyFile(File src, File target) {
         boolean ret = true;
 
@@ -331,13 +337,13 @@ public class FileStorageUtils {
         file.delete();
     }
 
-    public static boolean checkIfFileFinishedSaving(OCFile file) {
+    public static void checkIfFileFinishedSaving(OCFile file) {
         long lastModified = 0;
         long lastSize = 0;
         File realFile = new File(file.getStoragePath());
 
         if (realFile.lastModified() != file.getModificationTimestamp() && realFile.length() != file.getFileLength()) {
-            while ((realFile.lastModified() != lastModified) && (realFile.length() != lastSize)) {
+            while (realFile.lastModified() != lastModified && realFile.length() != lastSize) {
                 lastModified = realFile.lastModified();
                 lastSize = realFile.length();
                 try {
@@ -347,8 +353,6 @@ public class FileStorageUtils {
                 }
             }
         }
-
-        return true;
     }
 
     /**

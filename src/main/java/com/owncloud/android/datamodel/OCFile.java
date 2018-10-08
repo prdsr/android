@@ -59,6 +59,7 @@ public class OCFile implements Parcelable, Comparable<OCFile>, ServerFileInterfa
 
     private final static String PERMISSION_SHARED_WITH_ME = "S";    // TODO move to better location
     private final static String PERMISSION_CAN_RESHARE = "R";
+    private final static String PERMISSION_CAN_WRITE = "CK"; 
 
     public static final String PATH_SEPARATOR = "/";
     public static final String ROOT_PATH = PATH_SEPARATOR;
@@ -197,7 +198,7 @@ public class OCFile implements Parcelable, Comparable<OCFile>, ServerFileInterfa
         dest.writeSerializable(mMountType);
     }
 
-    public boolean getIsFavorite() {
+    public boolean isFavorite() {
         return mIsFavorite;
     }
 
@@ -466,8 +467,8 @@ public class OCFile implements Parcelable, Comparable<OCFile>, ServerFileInterfa
         Log_OC.d(TAG, "OCFile name changing from " + mRemotePath);
         if (name != null && name.length() > 0 && !name.contains(PATH_SEPARATOR) &&
                 !mRemotePath.equals(ROOT_PATH)) {
-            String parent = (new File(this.getRemotePath())).getParent();
-            parent = (parent.endsWith(PATH_SEPARATOR)) ? parent : parent + PATH_SEPARATOR;
+            String parent = new File(this.getRemotePath()).getParent();
+            parent = parent.endsWith(PATH_SEPARATOR) ? parent : parent + PATH_SEPARATOR;
             mRemotePath = parent + name;
             if (isFolder()) {
                 mRemotePath += PATH_SEPARATOR;
@@ -713,7 +714,7 @@ public class OCFile implements Parcelable, Comparable<OCFile>, ServerFileInterfa
      * @return 'True' if the file is hidden
      */
     public boolean isHidden() {
-        return getFileName().startsWith(".");
+        return getFileName().length() > 0 && getFileName().charAt(0) == '.';
     }
 
     public String getPermissions() {
@@ -782,6 +783,11 @@ public class OCFile implements Parcelable, Comparable<OCFile>, ServerFileInterfa
     public boolean canReshare() {
         String permissions = getPermissions();
         return permissions != null && permissions.contains(PERMISSION_CAN_RESHARE);
+    }
+
+    public boolean canWrite() {
+        String permissions = getPermissions();
+        return permissions != null && permissions.contains(PERMISSION_CAN_WRITE);
     }
 
     public WebdavEntry.MountType getMountType() {

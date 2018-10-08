@@ -1,4 +1,4 @@
-/**
+/*
  *   ownCloud Android client application
  *
  *   @author David A. Velasco
@@ -57,7 +57,7 @@ public class AccountAuthenticator extends AbstractAccountAuthenticator {
     public static final String KEY_REQUIRED_FEATURES = "requiredFeatures";
     public static final String KEY_LOGIN_OPTIONS = "loginOptions";
     public static final String KEY_ACCOUNT = "account";
-    
+
     private static final String TAG = AccountAuthenticator.class.getSimpleName();
     
     private Context mContext;
@@ -75,16 +75,15 @@ public class AccountAuthenticator extends AbstractAccountAuthenticator {
      */
     @Override
     public Bundle addAccount(AccountAuthenticatorResponse response,
-            String accountType, String authTokenType,
-            String[] requiredFeatures, Bundle options)
-            throws NetworkErrorException {
+                             String accountType, String authTokenType,
+                             String[] requiredFeatures, Bundle options) {
         Log_OC.i(TAG, "Adding account with type " + accountType + " and auth token " + authTokenType);
-        
-        final Bundle bundle = new Bundle();
-        
+
         AccountManager accountManager = AccountManager.get(mContext);
         Account[] accounts = accountManager.getAccountsByType(MainApp.getAccountType(mContext));
-        
+
+        final Bundle bundle = new Bundle();
+
         if (mContext.getResources().getBoolean(R.bool.multiaccount_support) || accounts.length < 1) {
             try {
                 validateAccountType(accountType);
@@ -104,16 +103,13 @@ public class AccountAuthenticator extends AbstractAccountAuthenticator {
             setIntentFlags(intent);
             
             bundle.putParcelable(AccountManager.KEY_INTENT, intent);
-        
         } else {
-
             // Return an error
             bundle.putInt(AccountManager.KEY_ERROR_CODE, AccountManager.ERROR_CODE_UNSUPPORTED_OPERATION);
             final String message = String.format(mContext.getString(R.string.auth_unsupported_multiaccount), mContext.getString(R.string.app_name)); 
             bundle.putString(AccountManager.KEY_ERROR_MESSAGE, message);
            
             mHandler.post(() -> Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show());
-            
         }
         
         return bundle;
@@ -124,7 +120,7 @@ public class AccountAuthenticator extends AbstractAccountAuthenticator {
      */
     @Override
     public Bundle confirmCredentials(AccountAuthenticatorResponse response,
-            Account account, Bundle options) throws NetworkErrorException {
+                                     Account account, Bundle options) {
         try {
             validateAccountType(account.type);
         } catch (AuthenticatorException e) {
@@ -155,9 +151,8 @@ public class AccountAuthenticator extends AbstractAccountAuthenticator {
      */
     @Override
     public Bundle getAuthToken(AccountAuthenticatorResponse response,
-            Account account, String authTokenType, Bundle options)
-            throws NetworkErrorException {
-        /// validate parameters
+                               Account account, String authTokenType, Bundle options) {
+        // validate parameters
         try {
             validateAccountType(account.type);
             validateAuthTokenType(authTokenType);
@@ -203,7 +198,7 @@ public class AccountAuthenticator extends AbstractAccountAuthenticator {
 
     @Override
     public Bundle hasFeatures(AccountAuthenticatorResponse response,
-            Account account, String[] features) throws NetworkErrorException {
+                              Account account, String[] features) {
         final Bundle result = new Bundle();
         result.putBoolean(AccountManager.KEY_BOOLEAN_RESULT, true);
         return result;
@@ -211,8 +206,7 @@ public class AccountAuthenticator extends AbstractAccountAuthenticator {
 
     @Override
     public Bundle updateCredentials(AccountAuthenticatorResponse response,
-            Account account, String authTokenType, Bundle options)
-            throws NetworkErrorException {
+                                    Account account, String authTokenType, Bundle options) {
 
         Intent intent = new Intent(mContext, AuthenticatorActivity.class);
         intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, response);

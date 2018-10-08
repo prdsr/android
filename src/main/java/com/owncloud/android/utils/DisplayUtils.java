@@ -27,13 +27,11 @@ package com.owncloud.android.utils;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.PictureDrawable;
@@ -50,6 +48,7 @@ import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.text.style.StyleSpan;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -103,18 +102,21 @@ import java.util.Set;
 /**
  * A helper class for UI/display related operations.
  */
-public class DisplayUtils {
+public final class DisplayUtils {
     private static final String TAG = DisplayUtils.class.getSimpleName();
 
     private static final String[] sizeSuffixes = {"B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"};
     private static final int[] sizeScales = {0, 0, 1, 1, 1, 2, 2, 2, 2};
-    private static final int RELATIVE_THRESHOLD_WARNING = 90;
-    private static final int RELATIVE_THRESHOLD_CRITICAL = 95;
+    private static final int RELATIVE_THRESHOLD_WARNING = 80;
     private static final String MIME_TYPE_UNKNOWN = "Unknown type";
 
     private static final String HTTP_PROTOCOL = "http://";
     private static final String HTTPS_PROTOCOL = "https://";
     private static final String TWITTER_HANDLE_PREFIX = "@";
+    private static final int MIMETYPE_PARTS_COUNT = 2;
+    private static final int BYTE_SIZE_DIVIDER = 1024;
+    private static final double BYTE_SIZE_DIVIDER_DOUBLE = 1024.0;
+    private static final int DATE_TIME_PARTS_SIZE = 2;
 
     private static Map<String, String> mimeType2HumanReadable;
 
@@ -131,6 +133,10 @@ public class DisplayUtils {
         // music
         mimeType2HumanReadable.put("audio/mpeg", "MP3 music file");
         mimeType2HumanReadable.put("application/ogg", "OGG music file");
+    }
+
+    private DisplayUtils() {
+        // utility class -> private constructor
     }
 
     /**
@@ -150,8 +156,8 @@ public class DisplayUtils {
         } else {
             double result = bytes;
             int suffixIndex = 0;
-            while (result > 1024 && suffixIndex < sizeSuffixes.length) {
-                result /= 1024.;
+            while (result > BYTE_SIZE_DIVIDER && suffixIndex < sizeSuffixes.length) {
+                result /= BYTE_SIZE_DIVIDER_DOUBLE;
                 suffixIndex++;
             }
 
@@ -171,7 +177,7 @@ public class DisplayUtils {
         if (mimeType2HumanReadable.containsKey(mimetype)) {
             return mimeType2HumanReadable.get(mimetype);
         }
-        if (mimetype.split("/").length >= 2) {
+        if (mimetype.split("/").length >= MIMETYPE_PARTS_COUNT) {
             return mimetype.split("/")[1].toUpperCase(Locale.getDefault()) + " file";
         }
         return MIME_TYPE_UNKNOWN;
@@ -242,12 +248,11 @@ public class DisplayUtils {
      * @param toASCII if true converts from Unicode to ASCII, if false converts from ASCII to Unicode
      * @return the URL containing the converted domain name
      */
-    @TargetApi(Build.VERSION_CODES.GINGERBREAD)
     public static String convertIdn(String url, boolean toASCII) {
 
         String urlNoDots = url;
         String dots = "";
-        while (urlNoDots.startsWith(".")) {
+        while (urlNoDots.length() > 0 && urlNoDots.charAt(0) == '.') {
             urlNoDots = url.substring(1);
             dots = dots + ".";
         }
@@ -262,7 +267,7 @@ public class DisplayUtils {
 
         int hostEnd = url.substring(hostStart).indexOf("/");
         // Handle URL which doesn't have a path (path is implicitly '/')
-        hostEnd = (hostEnd == -1 ? urlNoDots.length() : hostStart + hostEnd);
+        hostEnd = hostEnd == -1 ? urlNoDots.length() : hostStart + hostEnd;
 
         String host = urlNoDots.substring(hostStart, hostEnd);
         host = toASCII ? IDN.toASCII(host) : IDN.toUnicode(host);
@@ -319,8 +324,7 @@ public class DisplayUtils {
 
 
     /**
-     * determines the info level color based on certain thresholds
-     * {@link #RELATIVE_THRESHOLD_WARNING} and {@link #RELATIVE_THRESHOLD_CRITICAL}.
+     * determines the info level color based on {@link #RELATIVE_THRESHOLD_WARNING}.
      *
      * @param context  the app's context
      * @param relative relative value for which the info level color should be looked up
@@ -328,16 +332,9 @@ public class DisplayUtils {
      */
     public static int getRelativeInfoColor(Context context, int relative) {
         if (relative < RELATIVE_THRESHOLD_WARNING) {
-            if (ThemeUtils.colorToHexString(ThemeUtils.primaryColor(context)).equalsIgnoreCase(
-                    ThemeUtils.colorToHexString(context.getResources().getColor(R.color.primary)))) {
-                return context.getResources().getColor(R.color.infolevel_info);
-            } else {
-                return Color.GRAY;
-            }
-        } else if (relative >= RELATIVE_THRESHOLD_WARNING && relative < RELATIVE_THRESHOLD_CRITICAL) {
-            return context.getResources().getColor(R.color.infolevel_warning);
+            return ThemeUtils.primaryColor(context, true);
         } else {
-            return context.getResources().getColor(R.color.infolevel_critical);
+            return context.getResources().getColor(R.color.infolevel_warning);
         }
     }
 
@@ -358,7 +355,7 @@ public class DisplayUtils {
         }
 
         String[] parts = dateString.toString().split(",");
-        if (parts.length == 2) {
+        if (parts.length == DATE_TIME_PARTS_SIZE) {
             if (parts[1].contains(":") && !parts[0].contains(":")) {
                 return parts[0];
             } else if (parts[0].contains(":") && !parts[1].contains(":")) {
@@ -742,7 +739,7 @@ public class DisplayUtils {
     // Copied from https://raw.githubusercontent.com/nextcloud/talk-android/8ec8606bc61878e87e3ac8ad32c8b72d4680013c/app/src/main/java/com/nextcloud/talk/utils/DisplayUtils.java
     // under GPL3
     public static void useCompatVectorIfNeeded() {
-        if (Build.VERSION.SDK_INT < 23) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             try {
                 @SuppressLint("RestrictedApi") AppCompatDrawableManager drawableManager = AppCompatDrawableManager.get();
                 Class<?> inflateDelegateClass = Class.forName("android.support.v7.widget.AppCompatDrawableManager$InflateDelegate");
@@ -762,6 +759,13 @@ public class DisplayUtils {
         }
     }
 
+    public static int convertDpToPixel(float dp, Context context) {
+        Resources resources = context.getResources();
+        DisplayMetrics metrics = resources.getDisplayMetrics();
+
+        return (int) (dp * ((float) metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT));
+    }
+    
     static public void showServerOutdatedSnackbar(Activity activity) {
         Snackbar.make(activity.findViewById(android.R.id.content),
                 R.string.outdated_server, Snackbar.LENGTH_INDEFINITE)

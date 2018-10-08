@@ -363,11 +363,9 @@ public class FileMenuFilter {
             OperationsServiceBinder opsBinder = mComponentsGetter.getOperationsServiceBinder();
             FileUploaderBinder uploaderBinder = mComponentsGetter.getFileUploaderBinder();
             FileDownloaderBinder downloaderBinder = mComponentsGetter.getFileDownloaderBinder();
-            synchronizing = (
-                    anyFileSynchronizing(opsBinder) ||      // comparing local and remote
+            synchronizing = anyFileSynchronizing(opsBinder) ||      // comparing local and remote
                             anyFileDownloading(downloaderBinder) ||
-                            anyFileUploading(uploaderBinder)
-            );
+                            anyFileUploading(uploaderBinder);
         }
         return synchronizing;
     }
@@ -497,7 +495,7 @@ public class FileMenuFilter {
 
     private boolean allFavorites() {
         for (OCFile file : mFiles) {
-            if (!file.getIsFavorite()) {
+            if (!file.isFavorite()) {
                 return false;
             }
         }
@@ -506,7 +504,7 @@ public class FileMenuFilter {
 
     private boolean allNotFavorites() {
         for (OCFile file : mFiles) {
-            if (file.getIsFavorite()) {
+            if (file.isFavorite()) {
                 return false;
             }
         }

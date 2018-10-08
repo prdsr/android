@@ -95,6 +95,7 @@ public class PreviewMediaFragment extends FileFragment implements
     public static final String EXTRA_ACCOUNT = "ACCOUNT";
     private static final String EXTRA_PLAY_POSITION = "PLAY_POSITION";
     private static final String EXTRA_PLAYING = "PLAYING";
+    private static final double MIN_DENSITY_RATIO = 24.0;
 
     private Account mAccount;
     private ImageView mImagePreview;
@@ -666,14 +667,13 @@ public class PreviewMediaFragment extends FileFragment implements
     public boolean onTouch(View v, MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN && v.equals(mVideoPreview)) {
             // added a margin on the left to avoid interfering with gesture to open navigation drawer
-            if (event.getX() / Resources.getSystem().getDisplayMetrics().density > 24.0) {
+            if (event.getX() / Resources.getSystem().getDisplayMetrics().density > MIN_DENSITY_RATIO) {
                 startFullScreenVideo();
             }
             return true;
         }
         return false;
     }
-
 
     private void startFullScreenVideo() {
         Intent i = new Intent(getActivity(), PreviewVideoActivity.class);
@@ -804,7 +804,7 @@ public class PreviewMediaFragment extends FileFragment implements
      * @return 'True' if the file can be handled by the fragment.
      */
     public static boolean canBePreviewed(OCFile file) {
-        return (file != null && (MimeTypeUtil.isAudio(file) || MimeTypeUtil.isVideo(file)));
+        return file != null && (MimeTypeUtil.isAudio(file) || MimeTypeUtil.isVideo(file));
     }
 
 

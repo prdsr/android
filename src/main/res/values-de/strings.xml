@@ -3,9 +3,6 @@
     <string name="about_android">%1$s Android App</string>
     <string name="about_version">Version %1$s</string>
     <string name="actionbar_sync">Konto aktualisieren</string>
-    <string name="actionbar_upload">Hochladen</string>
-    <string name="actionbar_upload_from_apps">Inhalt anderer Apps</string>
-    <string name="actionbar_upload_files">Dateien</string>
     <string name="actionbar_open_with">Öffnen mit</string>
     <string name="actionbar_mkdir">Neuer Ordner</string>
     <string name="actionbar_settings">Einstellungen</string>
@@ -34,6 +31,7 @@
     <string name="drawer_item_activities">Aktivitäten</string>
     <string name="drawer_item_notifications">Benachrichtigungen</string>
     <string name="drawer_quota">%1$s von %2$s verwendet</string>
+    <string name="drawer_quota_unlimited">%1$s verwendet</string>
 	<string name="drawer_close">Hauptmenü schließen</string>
     <string name="drawer_open">Hauptmenü öffnen</string>
     <string name="prefs_category_general">Allgemein</string>
@@ -68,7 +66,6 @@
     <string name="auth_host_url">Server-Adresse https://…</string>
     <string name="auth_username">Benutzername</string>
     <string name="auth_password">Passwort</string>
-    <string name="auth_register">Sie haben noch keinen Server?\nKlicken Sie hier um Server-Anbieter zu finden</string>
     <string name="sync_string_files">Dateien</string>
     <string name="setup_btn_connect">Verbinden</string>
     <string name="uploader_btn_upload_text">Hochladen</string>
@@ -335,7 +332,7 @@
     <string name="placeholder_media_time">12:23:45</string>
 
     <string name="auto_upload_on_wifi">Nur über gebührenfreies WLAN hochladen</string>
-    <string name="instant_upload_on_charging">Nur während des Ladens hochladen</string>
+    <string name="instant_upload_on_charging">Nur während des Ladens der Batterie hochladen</string>
     <string name="instant_upload_path">/SofortUpload</string>
     <string name="auto_upload_path">/AutoUpload</string>
     <string name="conflict_title">Dateikonfilikt</string>
@@ -367,7 +364,7 @@
     <string name="activity_chooser_send_file_title">Senden</string>
 
     <string name="copy_link">Link kopieren</string>
-    <string name="clipboard_text_copied">In die Zwischenablage kopiert</string>
+    <string name="clipboard_text_copied">Link kopiert</string>
     <string name="clipboard_no_text_to_copy">Kein Text zum Kopieren in die Zwischenablage empfangen</string>
     <string name="clipboard_unexpected_error">Unerwarteter Fehler beim Kopieren in die Zwischenablage</string>
     <string name="clipboard_label">Text von %1$s kopiert</string>
@@ -506,6 +503,7 @@
     <string name="share_group_clarification">%1$s (Gruppe)</string>
     <string name="share_remote_clarification">%1$s (remote)</string>
     <string name="share_email_clarification">%1$s (E-Mail)</string>
+    <string name="share_room_clarification">%1$s (Unterhaltung)</string>
     <string name="share_known_remote_clarification">%1$s ( at %2$s )</string>
 
     <string name="share_sharee_unavailable">Entschuldigung, Ihre Serverversion erlaubt das Teilen mit Nutzern innerhalb der Clients nicht. \nBitte kontaktieren Sie Ihren Administrator</string>
@@ -589,24 +587,6 @@
 
     <!-- What's new feature and texts to show -->
     <string name="whats_new_title">Neu in %1$s</string>
-
-    <!-- Welcome to Nc intro features -->
-    <string name="welcome_feature_1_title">Ein sicheres Zuhause für all Ihre Daten</string>
-    <string name="welcome_feature_1_text">Zugriff, Freigabe &amp; Schutz Ihrer Dateien zu Hause und in Ihrem Unternehmen.</string>
-
-    <string name="welcome_feature_2_title">Mehrfachkonto</string>
-    <string name="welcome_feature_2_text">Verbinden Sie sich mit all Ihren Clouds</string>
-
-    <string name="welcome_feature_3_title">Automatisches Hochladen</string>
-    <string name="welcome_feature_3_text">Schützen Sie Ihre Fotos</string>
-
-    <string name="whats_new_end_to_end_encryption_title">Ende-zu-Ende Verschlüsselung</string>
-    <string name="whats_new_end_to_end_encryption_content">Wählen Sie zu verschlüsselnde Ordner aus, egal mit welchem Client. Fügen Sie unter Verwendung der 12 Worte Phrase neue Geräte hinzu.</string>
-    <string name="whats_new_resized_images_title">Auf Gerät optimierte Bildanzeige</string>
-    <string name="whats_new_resized_images_content">Verkleinerte Bilder sind schnell und funktionieren gut für das Teilen. Zoomen zum Herunterladen des Originalbilds.</string>
-    <string name="whats_new_ipv6_title">IPv6 Unterstützung</string>
-    <string name="whats_new_ipv6_content">Es wird IPv6 verwendet, falls der Server dies unterstützt. Ansonsten IPv4.</string>
-
     <string name="whats_new_skip">Überspringen</string>
 
     <!-- User information -->
@@ -762,7 +742,7 @@
     <string name="copy_move_to_encrypted_folder_not_supported">In verschlüsselten Ordner kopieren/verschieben wird aktuell nicht unterstützt.</string>
     <string name="untrusted_domain">Zugriff über nicht vertrauenswürdige Domain. Weitere Informationen finden sich in der Dokumentation.</string>
     <string name="notification_channel_push_name">Push-Benachrichtigungen</string>
-    <string name="notification_channel_push_description">Vom Server gesendete Push-Benachrichtigungen anzeigen: Erwähnungen in Kommentaren, Zugriff auf weitere Freigaben erhalten, Ankündigungen von Administratoren erhalten, etc.</string>
+    <string name="notification_channel_push_description">Vom Server gesendete Push-Benachrichtigungen anzeigen: Erwähnungen in Kommentaren, Zugriff auf externe Freigaben erhalten, Ankündigungen von Administratoren erhalten, etc.</string>
     <string name="sendbutton_description">Icon für den Senden-Button</string>
 
     <string name="oauth_2_0_auth_end_point_address_hint">Adresse Autorisierungsendpunkt</string>
@@ -781,6 +761,13 @@
     <string name="prefs_e2e_mnemonic">E2E-Mnemonic</string>
     <string name="prefs_e2e_no_device_credentials">Um Mnemonic anzuzeigen aktivieren Sie bitte Geräte-Zugangsdaten</string>
     <string name="whats_new_device_credentials_title">Androids internen Geräteschutz verwenden</string>
+    <string name="login">Anmelden</string>
+    <string name="signup_with_provider">Mit Provider anmelden</string>
+    <string name="host_your_own_server">Eigenen Server betreiben</string>
+    <string name="first_run_1_text">Halten Sie Ihre Daten sicher und unter Ihrer Kontrolle</string>
+    <string name="first_run_2_text">Sichere Zusammenarbeit &amp; Dateiaustausch</string>
+    <string name="first_run_3_text">Leicht verwendbares Web-Mail, Kalender &amp; Kontakte</string>
+    <string name="first_run_4_text">Bildschirm teilen, Online-Meetings&amp; Web-Konferenzen</string>
     <string name="whats_new_device_credentials_content">Verwenden Sie ein Muster, ein Passwort, eine Pin oder Ihren Fingerabdruck um den Zugriff auf Ihre Daten abzusichern.</string>
     <string name="restore_button_description">Gelöschte Datei wiederherstellen</string>
 	<string name="restore">Datei wiederherstellen</string>
@@ -794,7 +781,6 @@
     <string name="new_media_folder_detected">Neuer Medienordner %1$s gefunden.</string>
     <string name="new_media_folder_photos">Foto</string>
     <string name="new_media_folder_videos">Video</string>
-
     <string name="outdated_server">Die Serverversion wird nicht mehr unterstützt, bitte aktualisieren Sie diesen!</string>
     <string name="dismiss">Ausblenden</string>
     <string name="feedback_no_mail_app">Keine App verfügbar für den E-Mailversand!</string>
@@ -815,4 +801,10 @@
     <string name="file_keep">Behalten</string>
     <string name="file_rename">Umbenennen</string>
     <string name="fab_label">Hinzufügen oder hochladen</string>
+    <string name="account_creation_failed">Kontoerstellung fehlgeschlagen</string>
+
+    <string name="single_sign_on_request_token" formatted="true">Zulassen, dass %1$s auf Ihr Nextcloud Konto %2$s zugreifen darf?</string>
+    <string name="permission_deny">Ablehnen</string>
+    <string name="permission_allow">Zulassen</string>
+
 </resources>

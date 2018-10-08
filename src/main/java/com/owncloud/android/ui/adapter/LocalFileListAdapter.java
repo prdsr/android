@@ -68,7 +68,7 @@ public class LocalFileListAdapter extends RecyclerView.Adapter<RecyclerView.View
     private List<File> mFiles = new ArrayList<>();
     private List<File> mFilesAll = new ArrayList<>();
     private boolean mLocalFolderPicker;
-    private boolean gridView = false;
+    private boolean gridView;
     private LocalFileListFragmentInterface localFileListFragmentInterface;
     private Set<File> checkedFiles;
 
@@ -133,7 +133,14 @@ public class LocalFileListAdapter extends RecyclerView.Adapter<RecyclerView.View
     }
 
     public void addAllFilesToCheckedFiles() {
-        checkedFiles.addAll(mFiles);
+        for (File file : mFiles) {
+
+            // only select files
+            if (file.isFile()) {
+                checkedFiles.add(file);
+            }
+
+        }
     }
 
     public void removeAllFilesFromCheckedFiles() {
@@ -234,14 +241,14 @@ public class LocalFileListAdapter extends RecyclerView.Adapter<RecyclerView.View
             /* Cancellation needs do be checked and done before changing the drawable in fileIcon, or
              * {@link ThumbnailsCacheManager#cancelPotentialThumbnailWork} will NEVER cancel any task.
              */
-            boolean allowedToCreateNewThumbnail = (ThumbnailsCacheManager.cancelPotentialThumbnailWork(file, thumbnailView));
+            boolean allowedToCreateNewThumbnail = ThumbnailsCacheManager.cancelPotentialThumbnailWork(file, thumbnailView);
 
 
             // get Thumbnail if file is image
             if (MimeTypeUtil.isImage(file)) {
                 // Thumbnail in Cache?
                 Bitmap thumbnail = ThumbnailsCacheManager.getBitmapFromDiskCache(
-                        ThumbnailsCacheManager.PREFIX_THUMBNAIL + String.valueOf(file.hashCode())
+                        ThumbnailsCacheManager.PREFIX_THUMBNAIL + file.hashCode()
                 );
                 if (thumbnail != null) {
                     thumbnailView.setImageBitmap(thumbnail);
@@ -512,6 +519,10 @@ public class LocalFileListAdapter extends RecyclerView.Adapter<RecyclerView.View
         return output;
     }
 
+    public void setGridView(boolean gridView) {
+        this.gridView = gridView;
+    }
+
     static class LocalFileListItemViewHolder extends LocalFileListGridViewHolder {
         private final TextView fileSize;
         private final TextView lastModification;
@@ -523,6 +534,8 @@ public class LocalFileListAdapter extends RecyclerView.Adapter<RecyclerView.View
             fileSize = itemView.findViewById(R.id.file_size);
             fileSeparator = itemView.findViewById(R.id.file_separator);
             lastModification = itemView.findViewById(R.id.last_mod);
+
+            itemView.findViewById(R.id.overflow_menu).setVisibility(View.GONE);
         }
     }
 
@@ -540,7 +553,6 @@ public class LocalFileListAdapter extends RecyclerView.Adapter<RecyclerView.View
             checkbox = itemView.findViewById(R.id.custom_checkbox);
             itemLayout = itemView.findViewById(R.id.ListItemLayout);
 
-            itemView.findViewById(R.id.overflow_menu).setVisibility(View.GONE);
             itemView.findViewById(R.id.sharedIcon).setVisibility(View.GONE);
             itemView.findViewById(R.id.favorite_action).setVisibility(View.GONE);
             itemView.findViewById(R.id.keptOfflineIcon).setVisibility(View.GONE);

@@ -61,7 +61,6 @@
     <dimen name="alternate_half_padding">5dp</dimen>
     <dimen name="alternate_padding_right">55dp</dimen>
     <dimen name="display_text_min_height">32dp</dimen>
-    <dimen name="divider_height_independent">1dip</dimen>
     <dimen name="alternate_padding_independent">10dip</dimen>
     <dimen name="activity_row_layout_min_width_independent">196dip</dimen>
     <dimen name="user_icon_size_independent">40dip</dimen>
@@ -148,5 +147,7 @@
     <dimen name="synced_folders_recycler_view_layout_margin">-3dp</dimen>
     <dimen name="toolbar_user_information_layout_margin">12dp</dimen>
     <dimen name="bottom_sheet_text_size">16sp</dimen>
+    <dimen name="permission_dialog_text_size">18sp</dimen>
+    <dimen name="permission_dialog_text_padding">56dp</dimen>
     <integer name="media_grid_width">4</integer>
 </resources>
