@@ -74,15 +74,17 @@ import java.util.Set;
 public class ManageAccountsActivity extends FileActivity
         implements AccountListAdapter.AccountListAdapterListener, AccountManagerCallback<Boolean>, ComponentsGetter {
     private static final String TAG = ManageAccountsActivity.class.getSimpleName();
+
     public static final String KEY_ACCOUNT_LIST_CHANGED = "ACCOUNT_LIST_CHANGED";
     public static final String KEY_CURRENT_ACCOUNT_CHANGED = "CURRENT_ACCOUNT_CHANGED";
-
     public static final String PENDING_FOR_REMOVAL = "PENDING_FOR_REMOVAL";
 
     private static final String KEY_DISPLAY_NAME = "DISPLAY_NAME";
 
     private static final int KEY_USER_INFO_REQUEST_CODE = 13;
     private static final int KEY_DELETE_CODE = 101;
+    private static final int SINGLE_ACCOUNT = 1;
+    private static final int MIN_MULTI_ACCOUNT_SIZE = 2;
 
     private ListView mListView;
     private final Handler mHandler = new Handler();
@@ -90,8 +92,8 @@ public class ManageAccountsActivity extends FileActivity
     private AccountListAdapter mAccountListAdapter;
     private ServiceConnection mDownloadServiceConnection;
     private ServiceConnection mUploadServiceConnection;
-    Set<String> mOriginalAccounts;
-    String mOriginalCurrentAccount;
+    private Set<String> mOriginalAccounts;
+    private String mOriginalCurrentAccount;
     private Drawable mTintedCheck;
 
     private ArbitraryDataProvider arbitraryDataProvider;
@@ -270,6 +272,13 @@ public class ManageAccountsActivity extends FileActivity
     }
 
     @Override
+    public void showFirstRunActivity() {
+        Intent firstRunIntent = new Intent(getApplicationContext(), FirstRunActivity.class);
+        firstRunIntent.putExtra(FirstRunActivity.EXTRA_ALLOW_CLOSE, true);
+        startActivity(firstRunIntent);
+    }
+
+    @Override
     public void createAccount() {
         AccountManager am = AccountManager.get(getApplicationContext());
         am.addAccount(MainApp.getAccountType(this),
@@ -286,9 +295,9 @@ public class ManageAccountsActivity extends FileActivity
                                 String name = result.getString(AccountManager.KEY_ACCOUNT_NAME);
                                 AccountUtils.setCurrentOwnCloudAccount(getApplicationContext(), name);
                                 mAccountListAdapter = new AccountListAdapter(
-                                    ManageAccountsActivity.this,
-                                    getAccountListItems(),
-                                    mTintedCheck
+                                        ManageAccountsActivity.this,
+                                        getAccountListItems(),
+                                        mTintedCheck
                                 );
                                 mListView.setAdapter(mAccountListAdapter);
                                 runOnUiThread(new Runnable() {
@@ -340,7 +349,7 @@ public class ManageAccountsActivity extends FileActivity
             }
 
             List<AccountListItem> accountListItemArray = getAccountListItems();
-            if (accountListItemArray.size() > 1) {
+            if (accountListItemArray.size() > SINGLE_ACCOUNT) {
                 mAccountListAdapter = new AccountListAdapter(this, accountListItemArray, mTintedCheck);
                 mListView.setAdapter(mAccountListAdapter);
             } else {
@@ -445,7 +454,7 @@ public class ManageAccountsActivity extends FileActivity
         }
 
         // only one to be (deleted) account remaining
-        if (accounts.length < 2) {
+        if (accounts.length < MIN_MULTI_ACCOUNT_SIZE) {
             Intent resultIntent = new Intent();
             resultIntent.putExtra(KEY_ACCOUNT_LIST_CHANGED, true);
             resultIntent.putExtra(KEY_CURRENT_ACCOUNT_CHANGED, true);

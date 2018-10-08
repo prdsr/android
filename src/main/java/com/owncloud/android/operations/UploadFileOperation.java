@@ -127,7 +127,7 @@ public class UploadFileOperation extends SyncOperation {
     /**
      * Local path to file which is to be uploaded (before any possible renaming or moving).
      */
-    private String mOriginalStoragePath = null;
+    private String mOriginalStoragePath;
     private Set<OnDatatransferProgressListener> mDataTransferListeners = new HashSet<>();
     private OnRenameListener mRenameUploadListener;
 
@@ -138,7 +138,7 @@ public class UploadFileOperation extends SyncOperation {
 
     private UploadRemoteFileOperation mUploadOperation;
 
-    protected RequestEntity mEntity = null;
+    protected RequestEntity mEntity;
 
     private Account mAccount;
     private OCUpload mUpload;
@@ -215,19 +215,19 @@ public class UploadFileOperation extends SyncOperation {
         mCreatedBy = upload.getCreatedBy();
         mRemoteFolderToBeCreated = upload.isCreateRemoteFolder();
         // Ignore power save mode only if user explicitly created this upload
-        mIgnoringPowerSaveMode = (mCreatedBy == CREATED_BY_USER);
+        mIgnoringPowerSaveMode = mCreatedBy == CREATED_BY_USER;
         mFolderUnlockToken = upload.getFolderUnlockToken();
     }
 
-    public boolean getIsWifiRequired() {
+    public boolean isWifiRequired() {
         return mOnWifiOnly;
     }
 
-    public boolean getIsChargingRequired() {
+    public boolean isChargingRequired() {
         return mWhileChargingOnly;
     }
 
-    public boolean getIsIgnoringPowerSaveMode() { return mIgnoringPowerSaveMode; }
+    public boolean isIgnoringPowerSaveMode() { return mIgnoringPowerSaveMode; }
 
     public Account getAccount() {
         return mAccount;
@@ -699,12 +699,10 @@ public class UploadFileOperation extends SyncOperation {
 
     private RemoteOperationResult unlockFolder(OCFile parentFolder, OwnCloudClient client, String token) {
         if (token != null) {
-            UnlockFileOperation unlockFileOperation = new UnlockFileOperation(parentFolder.getLocalId(), token);
-            RemoteOperationResult unlockFileOperationResult = unlockFileOperation.execute(client, true);
-
-            return unlockFileOperationResult;
-        } else
+            return new UnlockFileOperation(parentFolder.getLocalId(), token).execute(client, true);
+        } else {
             return new RemoteOperationResult(new Exception("No token available"));
+        }
     }
 
     private RemoteOperationResult checkConditions(File originalFile) {
@@ -723,8 +721,8 @@ public class UploadFileOperation extends SyncOperation {
         }
 
         // check if charging conditions are met and delays the upload otherwise
-        if (mWhileChargingOnly && (!Device.getBatteryStatus(mContext).isCharging() && Device.getBatteryStatus(mContext)
-                .getBatteryPercent() < 1)) {
+        if (mWhileChargingOnly && !Device.getBatteryStatus(mContext).isCharging()
+                && Device.getBatteryStatus(mContext).getBatteryPercent() < 1) {
             Log_OC.d(TAG, "Upload delayed until the device is charging: " + getRemotePath());
             remoteOperationResult =  new RemoteOperationResult(ResultCode.DELAYED_FOR_CHARGING);
         }

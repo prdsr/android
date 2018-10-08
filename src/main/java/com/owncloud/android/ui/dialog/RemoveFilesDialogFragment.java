@@ -42,10 +42,10 @@ import java.util.Collection;
 public class RemoveFilesDialogFragment extends ConfirmationDialogFragment implements
         ConfirmationDialogFragmentListener {
 
-    private Collection<OCFile> mTargetFiles;
-
+    private static final int SINGLE_SELECTION = 1;
     private static final String ARG_TARGET_FILES = "TARGET_FILES";
 
+    private Collection<OCFile> mTargetFiles;
     private ActionMode actionMode;
 
     /**
@@ -81,7 +81,7 @@ public class RemoveFilesDialogFragment extends ConfirmationDialogFragment implem
             containsFavorite |= file.isAvailableOffline();
         }
 
-        if (files.size() == 1) {
+        if (files.size() == SINGLE_SELECTION) {
             // choose message for a single file
             OCFile file = files.get(0);
 
@@ -101,7 +101,7 @@ public class RemoveFilesDialogFragment extends ConfirmationDialogFragment implem
             -1;
 
         args.putInt(ARG_MESSAGE_RESOURCE_ID, messageStringId);
-        if (files.size() == 1) {
+        if (files.size() == SINGLE_SELECTION) {
             args.putStringArray(ARG_MESSAGE_ARGUMENTS, new String[]{files.get(0).getFileName()});
         }
         args.putInt(ARG_POSITIVE_BTN_RES, R.string.file_delete);
@@ -158,13 +158,7 @@ public class RemoveFilesDialogFragment extends ConfirmationDialogFragment implem
     public void onConfirmation(String callerTag) {
         ComponentsGetter cg = (ComponentsGetter) getActivity();
         cg.getFileOperationsHelper().removeFiles(mTargetFiles, false, false);
-
-        // This is used when finishing an actionMode,
-        // for example if we want to exit the selection mode
-        // after deleting the target files.
-        if (actionMode != null) {
-            actionMode.finish();
-        }
+        finishActionMode();
     }
     
     /**
@@ -174,6 +168,7 @@ public class RemoveFilesDialogFragment extends ConfirmationDialogFragment implem
     public void onCancel(String callerTag) {
         ComponentsGetter cg = (ComponentsGetter) getActivity();
         cg.getFileOperationsHelper().removeFiles(mTargetFiles, true, false);
+        finishActionMode();
     }
 
     @Override
@@ -183,5 +178,16 @@ public class RemoveFilesDialogFragment extends ConfirmationDialogFragment implem
 
     private void setActionMode(ActionMode actionMode) {
         this.actionMode = actionMode;
+    }
+
+    /**
+     * This is used when finishing an actionMode,
+     * for example if we want to exit the selection mode
+     * after deleting the target files.
+     */
+    private void finishActionMode() {
+        if (actionMode != null) {
+            actionMode.finish();
+        }
     }
 }

@@ -3,9 +3,6 @@
     <string name="about_android">%1$s Андроид апликација</string>
     <string name="about_version">верзија %1$s</string>
     <string name="actionbar_sync">Освежи налог</string>
-    <string name="actionbar_upload">Отпреми</string>
-    <string name="actionbar_upload_from_apps">садржај из других апликација</string>
-    <string name="actionbar_upload_files">фајлове</string>
     <string name="actionbar_open_with">Отвори помоћу</string>
     <string name="actionbar_mkdir">Нова фасцикла</string>
     <string name="actionbar_settings">Поставке</string>
@@ -34,6 +31,7 @@
     <string name="drawer_item_activities">Активности</string>
     <string name="drawer_item_notifications">Обавештења</string>
     <string name="drawer_quota">%1$s од %2$s заузето</string>
+    <string name="drawer_quota_unlimited">%1$s искоришћено</string>
 	<string name="drawer_close">Затвори бочну траку</string>
     <string name="drawer_open">Отвори бочну траку</string>
     <string name="prefs_category_general">Опште</string>
@@ -68,7 +66,6 @@
     <string name="auth_host_url">Адреса сервера https://…</string>
     <string name="auth_username">Корисничко име</string>
     <string name="auth_password">Лозинка</string>
-    <string name="auth_register">Још немате Некстклауд?\nКликните овде да направите један код провајдера</string>
     <string name="sync_string_files">Фајлови</string>
     <string name="setup_btn_connect">Повежи се</string>
     <string name="uploader_btn_upload_text">Отпреми</string>
@@ -369,7 +366,6 @@
     <string name="activity_chooser_send_file_title">Пошаљи</string>
 
     <string name="copy_link">Копирај везу</string>
-    <string name="clipboard_text_copied">Копирано у оставу</string>
     <string name="clipboard_no_text_to_copy">Нема текста за копирање у оставу</string>
     <string name="clipboard_unexpected_error">Неочекивана грешка приликом копирања у оставу</string>
     <string name="clipboard_label">Текст прекопиран са %1$s</string>
@@ -510,6 +506,7 @@
     <string name="share_group_clarification">%1$s (група)</string>
     <string name="share_remote_clarification">%1$s(удаљено)</string>
     <string name="share_email_clarification">%1$s (е-пошта)</string>
+    <string name="share_room_clarification">%1$s (разговор)</string>
     <string name="share_known_remote_clarification">%1$s (на %2$s)</string>
 
     <string name="share_sharee_unavailable">Ажурирајте верзију сервера да дозвољава дељење између корисника из њихових клијената.\nКонтактирајте администратора</string>
@@ -594,24 +591,6 @@
 
     <!-- What's new feature and texts to show -->
     <string name="whats_new_title">Ново у %1$s</string>
-
-    <!-- Welcome to Nc intro features -->
-    <string name="welcome_feature_1_title">Сигурно место за све Ваше податке</string>
-    <string name="welcome_feature_1_text">Приступите, делите и заштитите Ваше податке кући и на послу</string>
-
-    <string name="welcome_feature_2_title">Подршка за више налога</string>
-    <string name="welcome_feature_2_text">Повежите се на све Ваше облаке</string>
-
-    <string name="welcome_feature_3_title">Аутоматска отпремања</string>
-    <string name="welcome_feature_3_text">Држите Ваше слике на сигурном</string>
-
-    <string name="whats_new_end_to_end_encryption_title">Шифровање са краја на крај</string>
-    <string name="whats_new_end_to_end_encryption_content">Кликните за шифровање, са било ког клијента. Додајте нове копирајући 12 речи.</string>
-    <string name="whats_new_resized_images_title">Прилагођавајуће слике</string>
-    <string name="whats_new_resized_images_content">Мале слике су брзе и супер су за дељење. Зумирајте слику да је скините целу.</string>
-    <string name="whats_new_ipv6_title">Подршка за IPv6</string>
-    <string name="whats_new_ipv6_content">IPv6 уколико га сервер подржава, у супротном IPv4.</string>
-
     <string name="whats_new_skip">Прескочи</string>
 
     <!-- User information -->
@@ -786,6 +765,13 @@
     <string name="prefs_e2e_mnemonic">Е2Е мнемоник</string>
     <string name="prefs_e2e_no_device_credentials">За приказивање мнемоника, омогућите акредитиве на уређају.</string>
     <string name="whats_new_device_credentials_title">Користи Андроидову интерну заштиту уређаја</string>
+    <string name="login">Пријава</string>
+    <string name="signup_with_provider">Пријавите се преко провајдера</string>
+    <string name="host_your_own_server">Хостујте сопствени  сервер</string>
+    <string name="first_run_1_text">Држите податке безбедним и под Вашом контролом</string>
+    <string name="first_run_2_text">Безбедна сарадња &amp; и размена фајлова</string>
+    <string name="first_run_3_text">Веб пошта лака за коришћење, календар &amp; контакти</string>
+    <string name="first_run_4_text">Дељење екрана, састанци на интернету &amp; веб конференције</string>
     <string name="whats_new_device_credentials_content">Користите било шта попут шаблона, лозинке, пина или отиска Вашег прста да заштитите Ваше податке.</string>
     <string name="restore_button_description">Поврати обрисани фајл</string>
 	<string name="restore">Поврати фајл</string>
@@ -799,7 +785,6 @@
     <string name="new_media_folder_detected">Пронађена је нова мултимедијална фасцикла са %1$s</string>
     <string name="new_media_folder_photos">сликама</string>
     <string name="new_media_folder_videos">видео записима</string>
-
     <string name="outdated_server">Сервер је изашао из гаранције, молимо ажурирајте га!</string>
     <string name="dismiss">Одбаци</string>
     <string name="feedback_no_mail_app">Нема апликација за слање е-поште!</string>
@@ -820,4 +805,10 @@
     <string name="file_keep">Задржи</string>
     <string name="file_rename">Преименуј</string>
     <string name="fab_label">Додај или отпреми</string>
+    <string name="account_creation_failed">Прављење налога није успело</string>
+
+    <string name="single_sign_on_request_token" formatted="true">Дозволи да %1$s приступа Вашем Некстклауд налогу %2$s?</string>
+    <string name="permission_deny">Одбиј</string>
+    <string name="permission_allow">Дозволи</string>
+
 </resources>

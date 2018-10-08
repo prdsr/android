@@ -251,14 +251,14 @@ public class StorageMigration {
         }
 
         protected void stopAccountsSyncing() {
-            for (int i = 0; i < mOcAccounts.length; ++i) {
-                ContentResolver.setSyncAutomatically(mOcAccounts[i], mAuthority, false);
+            for (Account ocAccount : mOcAccounts) {
+                ContentResolver.setSyncAutomatically(ocAccount, mAuthority, false);
             }
         }
 
         protected void waitForUnfinishedSynchronizations() {
-            for (int i = 0; i < mOcAccounts.length; ++i) {
-                while (ContentResolver.isSyncActive(mOcAccounts[i], mAuthority)) {
+            for (Account ocAccount : mOcAccounts) {
+                while (ContentResolver.isSyncActive(ocAccount, mAuthority)) {
                     try {
                         Thread.sleep(1000);
                     } catch (InterruptedException e) {
@@ -269,13 +269,14 @@ public class StorageMigration {
             }
         }
 
-        protected void restoreAccountsSyncStatus(boolean oldSync[]) {
+        protected void restoreAccountsSyncStatus(boolean... oldSync) {
             // If we don't have the old sync statuses, then
             // probably migration failed even before saving states,
             // which is weird and should be investigated.
             // But its better than crashing on ArrayOutOfBounds.
-            if (oldSync == null)
+            if (oldSync == null) {
                 return;
+            }
             for (int i = 0; i < mOcAccounts.length; ++i) {
                 ContentResolver.setSyncAutomatically(mOcAccounts[i], mAuthority, oldSync[i]);
             }

@@ -44,6 +44,7 @@ import com.owncloud.android.lib.common.operations.RemoteOperationResult;
 import com.owncloud.android.lib.common.operations.RemoteOperationResult.ResultCode;
 import com.owncloud.android.lib.common.utils.Log_OC;
 import com.owncloud.android.operations.RefreshFolderOperation;
+import com.owncloud.android.operations.SynchronizeFolderOperation;
 import com.owncloud.android.operations.UpdateOCVersionOperation;
 import com.owncloud.android.ui.activity.ErrorsWhileCopyingHandlerActivity;
 import com.owncloud.android.ui.notifications.NotificationUtils;
@@ -141,9 +142,6 @@ public class FileSyncAdapter extends AbstractOwnCloudSyncAdapter {
             SyncResult syncResult) {
 
         mCancellation = false;
-        /* When 'true' the process was requested by the user through the user interface;
-       when 'false', it was requested automatically by the system */
-        boolean mIsManualSync = extras.getBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, false);
         mFailedResultsCounter = 0;
         mLastFailedResult = null;
         mConflictsFound = 0;
@@ -170,7 +168,10 @@ public class FileSyncAdapter extends AbstractOwnCloudSyncAdapter {
         Log_OC.d(TAG, "Synchronization of ownCloud account " + account.name + " starting");
         sendLocalBroadcast(EVENT_FULL_SYNC_START, null, null);  // message to signal the start
                                                                 // of the synchronization to the UI
-        
+
+        /* When 'true' the process was requested by the user through the user interface;
+           when 'false', it was requested automatically by the system */
+        boolean mIsManualSync = extras.getBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, false);
         try {
             updateOCVersion();
             mCurrentSyncTime = System.currentTimeMillis();
@@ -181,7 +182,6 @@ public class FileSyncAdapter extends AbstractOwnCloudSyncAdapter {
                 Log_OC.d(TAG, "Leaving synchronization before synchronizing the root folder " +
                         "because cancellation request");
             }
-            
             
         } finally {
             // it's important making this although very unexpected errors occur;
@@ -316,12 +316,12 @@ public class FileSyncAdapter extends AbstractOwnCloudSyncAdapter {
      *                              synchronization
      */
     private boolean isFinisher(RemoteOperationResult failedResult) {
-        if  (failedResult != null) {
+        if (failedResult != null) {
             RemoteOperationResult.ResultCode code = failedResult.getCode();
-            return (code.equals(RemoteOperationResult.ResultCode.SSL_ERROR) ||
-                    code.equals(RemoteOperationResult.ResultCode.SSL_RECOVERABLE_PEER_UNVERIFIED) ||
-                    code.equals(RemoteOperationResult.ResultCode.BAD_OC_VERSION) ||
-                    code.equals(RemoteOperationResult.ResultCode.INSTANCE_NOT_CONFIGURED));
+            return code.equals(RemoteOperationResult.ResultCode.SSL_ERROR)
+                    || code.equals(RemoteOperationResult.ResultCode.SSL_RECOVERABLE_PEER_UNVERIFIED)
+                    || code.equals(RemoteOperationResult.ResultCode.BAD_OC_VERSION)
+                    || code.equals(RemoteOperationResult.ResultCode.INSTANCE_NOT_CONFIGURED);
         }
         return false;
     }
@@ -358,7 +358,7 @@ public class FileSyncAdapter extends AbstractOwnCloudSyncAdapter {
      * 
      * @param event             Event in the process of synchronization to be notified.   
      * @param dirRemotePath     Remote path of the folder target of the event occurred.
-     * @param result            Result of an individual {@ SynchronizeFolderOperation},
+     * @param result            Result of an individual {@link SynchronizeFolderOperation},
      *                          if completed; may be null.
      */
     private void sendLocalBroadcast(String event, String dirRemotePath,
@@ -389,10 +389,8 @@ public class FileSyncAdapter extends AbstractOwnCloudSyncAdapter {
      */
     private void notifyFailedSynchronization() {
         NotificationCompat.Builder notificationBuilder = createNotificationBuilder();
-        boolean needsToUpdateCredentials = (
-                mLastFailedResult != null &&
-                ResultCode.UNAUTHORIZED.equals(mLastFailedResult.getCode())
-        );
+        boolean needsToUpdateCredentials = mLastFailedResult != null
+                && ResultCode.UNAUTHORIZED.equals(mLastFailedResult.getCode());
         if (needsToUpdateCredentials) {
             // let the user update credentials with one click
             Intent updateAccountCredentials = new Intent(getContext(), AuthenticatorActivity.class);
@@ -522,8 +520,8 @@ public class FileSyncAdapter extends AbstractOwnCloudSyncAdapter {
      * @param builder
      */
     private void showNotification(int id, NotificationCompat.Builder builder) {
-        NotificationManager notificationManager = ((NotificationManager) getContext().
-                getSystemService(Context.NOTIFICATION_SERVICE));
+        NotificationManager notificationManager = (NotificationManager) getContext().
+                getSystemService(Context.NOTIFICATION_SERVICE);
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             builder.setChannelId(NotificationUtils.NOTIFICATION_CHANNEL_FILE_SYNC);

@@ -57,7 +57,6 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SecureRandom;
@@ -65,12 +64,12 @@ import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.security.spec.InvalidKeySpecException;
-import java.security.spec.InvalidParameterSpecException;
 import java.security.spec.KeySpec;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.crypto.BadPaddingException;
@@ -80,7 +79,6 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
-import javax.crypto.ShortBufferException;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
@@ -89,8 +87,7 @@ import javax.crypto.spec.SecretKeySpec;
 /**
  * Utils for encryption
  */
-
-public class EncryptionUtils {
+public final class EncryptionUtils {
     private static String TAG = EncryptionUtils.class.getSimpleName();
 
     public static final String PUBLIC_KEY = "PUBLIC_KEY";
@@ -99,6 +96,7 @@ public class EncryptionUtils {
     public static final int ivLength = 16;
     public static final int saltLength = 40;
 
+    private static final String HASH_DELIMITER = "$";
     private static final String ivDelimiter = "fA=="; // "|" base64 encoded
     private static final int iterationCount = 1024;
     private static final int keyStrength = 256;
@@ -106,6 +104,10 @@ public class EncryptionUtils {
     private static final String AES = "AES";
     private static final String RSA_CIPHER = "RSA/ECB/OAEPWithSHA-256AndMGF1Padding";
     private static final String RSA = "RSA";
+
+    private EncryptionUtils() {
+        // utility class -> private constructor
+    }
 
     /*
     JSON
@@ -132,9 +134,9 @@ public class EncryptionUtils {
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public static EncryptedFolderMetadata encryptFolderMetadata(DecryptedFolderMetadata decryptedFolderMetadata,
                                                                 String privateKey)
-            throws IOException, NoSuchAlgorithmException, ShortBufferException, InvalidKeyException,
+            throws NoSuchAlgorithmException, InvalidKeyException,
             InvalidAlgorithmParameterException, NoSuchPaddingException, BadPaddingException,
-            NoSuchProviderException, IllegalBlockSizeException, InvalidKeySpecException, CertificateException {
+            IllegalBlockSizeException, InvalidKeySpecException {
 
         HashMap<String, EncryptedFolderMetadata.EncryptedFile> files = new HashMap<>();
         EncryptedFolderMetadata encryptedFolderMetadata = new EncryptedFolderMetadata(decryptedFolderMetadata
@@ -171,9 +173,9 @@ public class EncryptionUtils {
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public static DecryptedFolderMetadata decryptFolderMetaData(EncryptedFolderMetadata encryptedFolderMetadata,
                                                                 String privateKey)
-            throws IOException, NoSuchAlgorithmException, ShortBufferException, InvalidKeyException,
+            throws NoSuchAlgorithmException, InvalidKeyException,
             InvalidAlgorithmParameterException, NoSuchPaddingException, BadPaddingException,
-            NoSuchProviderException, IllegalBlockSizeException, CertificateException, InvalidKeySpecException {
+            IllegalBlockSizeException, InvalidKeySpecException {
 
         HashMap<String, DecryptedFolderMetadata.DecryptedFile> files = new HashMap<>();
         DecryptedFolderMetadata decryptedFolderMetadata = new DecryptedFolderMetadata(
@@ -278,9 +280,9 @@ public class EncryptionUtils {
      */
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public static EncryptedFile encryptFile(OCFile ocFile, byte[] encryptionKeyBytes, byte[] iv)
-            throws NoSuchProviderException, NoSuchAlgorithmException,
+            throws NoSuchAlgorithmException,
             InvalidAlgorithmParameterException, NoSuchPaddingException, InvalidKeyException,
-            BadPaddingException, IllegalBlockSizeException, IOException, ShortBufferException {
+            BadPaddingException, IllegalBlockSizeException, IOException {
         File file = new File(ocFile.getStoragePath());
 
         return encryptFile(file, encryptionKeyBytes, iv);
@@ -294,9 +296,9 @@ public class EncryptionUtils {
      */
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public static EncryptedFile encryptFile(File file, byte[] encryptionKeyBytes, byte[] iv)
-            throws NoSuchProviderException, NoSuchAlgorithmException,
+            throws NoSuchAlgorithmException,
             InvalidAlgorithmParameterException, NoSuchPaddingException, InvalidKeyException,
-            BadPaddingException, IllegalBlockSizeException, IOException, ShortBufferException {
+            BadPaddingException, IllegalBlockSizeException, IOException {
 
         Cipher cipher = Cipher.getInstance(AES_CIPHER);
 
@@ -325,9 +327,9 @@ public class EncryptionUtils {
      */
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public static byte[] decryptFile(File file, byte[] encryptionKeyBytes, byte[] iv, byte[] authenticationTag)
-            throws NoSuchProviderException, NoSuchAlgorithmException,
+            throws NoSuchAlgorithmException,
             InvalidAlgorithmParameterException, NoSuchPaddingException, InvalidKeyException,
-            BadPaddingException, IllegalBlockSizeException, IOException, ShortBufferException {
+            BadPaddingException, IllegalBlockSizeException, IOException {
 
 
         Cipher cipher = Cipher.getInstance(AES_CIPHER);
@@ -370,9 +372,9 @@ public class EncryptionUtils {
      */
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public static String encryptStringAsymmetric(String string, String cert)
-            throws NoSuchProviderException, NoSuchAlgorithmException,
-            InvalidAlgorithmParameterException, NoSuchPaddingException, InvalidKeyException,
-            BadPaddingException, IllegalBlockSizeException, IOException, ShortBufferException, InvalidKeySpecException,
+            throws NoSuchAlgorithmException,
+            NoSuchPaddingException, InvalidKeyException,
+            BadPaddingException, IllegalBlockSizeException, IOException,
             CertificateException {
 
         Cipher cipher = Cipher.getInstance(RSA_CIPHER);
@@ -406,9 +408,9 @@ public class EncryptionUtils {
      */
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public static String decryptStringAsymmetric(String string, String privateKeyString)
-            throws NoSuchProviderException, NoSuchAlgorithmException,
-            InvalidAlgorithmParameterException, NoSuchPaddingException, InvalidKeyException,
-            BadPaddingException, IllegalBlockSizeException, IOException, ShortBufferException, CertificateException,
+            throws NoSuchAlgorithmException,
+            NoSuchPaddingException, InvalidKeyException,
+            BadPaddingException, IllegalBlockSizeException,
             InvalidKeySpecException {
 
         Cipher cipher = Cipher.getInstance(RSA_CIPHER);
@@ -437,10 +439,9 @@ public class EncryptionUtils {
      */
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public static String encryptStringSymmetric(String string, byte[] encryptionKeyBytes)
-            throws NoSuchProviderException, NoSuchAlgorithmException,
+            throws NoSuchAlgorithmException,
             InvalidAlgorithmParameterException, NoSuchPaddingException, InvalidKeyException,
-            BadPaddingException, IllegalBlockSizeException, IOException, ShortBufferException, InvalidKeySpecException,
-            CertificateException {
+            BadPaddingException, IllegalBlockSizeException {
 
         Cipher cipher = Cipher.getInstance(AES_CIPHER);
         byte[] iv = randomBytes(ivLength);
@@ -469,10 +470,9 @@ public class EncryptionUtils {
      */
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public static String decryptStringSymmetric(String string, byte[] encryptionKeyBytes)
-            throws NoSuchProviderException, NoSuchAlgorithmException,
+            throws NoSuchAlgorithmException,
             InvalidAlgorithmParameterException, NoSuchPaddingException, InvalidKeyException,
-            BadPaddingException, IllegalBlockSizeException, IOException, ShortBufferException, CertificateException,
-            InvalidKeySpecException {
+            BadPaddingException, IllegalBlockSizeException {
 
         Cipher cipher = Cipher.getInstance(AES_CIPHER);
 
@@ -502,8 +502,8 @@ public class EncryptionUtils {
      * @return encrypted string, bytes first encoded base64, IV separated with "|", then to string
      */
     public static String encryptPrivateKey(String privateKey, String keyPhrase) throws NoSuchPaddingException,
-            NoSuchAlgorithmException, NoSuchProviderException, InvalidKeyException, BadPaddingException,
-            IllegalBlockSizeException, InvalidKeySpecException, InvalidParameterSpecException {
+            NoSuchAlgorithmException, InvalidKeyException, BadPaddingException,
+            IllegalBlockSizeException, InvalidKeySpecException {
         Cipher cipher = Cipher.getInstance(AES_CIPHER);
 
         SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
@@ -533,7 +533,7 @@ public class EncryptionUtils {
      * @return decrypted string
      */
     public static String decryptPrivateKey(String privateKey, String keyPhrase) throws NoSuchPaddingException,
-            NoSuchAlgorithmException, NoSuchProviderException, InvalidKeyException, BadPaddingException,
+            NoSuchAlgorithmException, InvalidKeyException, BadPaddingException,
             IllegalBlockSizeException, InvalidKeySpecException, InvalidAlgorithmParameterException {
 
         // split up iv, salt
@@ -559,7 +559,7 @@ public class EncryptionUtils {
                 .replace("-----END PRIVATE KEY-----", "");
     }
 
-    public static String privateKeyToPEM(PrivateKey privateKey) throws IOException {
+    public static String privateKeyToPEM(PrivateKey privateKey) {
         String privateKeyString = encodeBytesToBase64String(privateKey.getEncoded());
 
         return "-----BEGIN PRIVATE KEY-----\n" + privateKeyString.replaceAll("(.{65})", "$1\n")
@@ -571,8 +571,9 @@ public class EncryptionUtils {
      */
 
     public static String getMD5Sum(File file) {
+        FileInputStream fileInputStream = null;
         try {
-            FileInputStream fileInputStream = new FileInputStream(file);
+            fileInputStream = new FileInputStream(file);
             MessageDigest md5 = MessageDigest.getInstance("MD5");
             byte[] bytes = new byte[2048];
             int readBytes;
@@ -585,12 +586,20 @@ public class EncryptionUtils {
 
         } catch (Exception e) {
             Log_OC.e(TAG, e.getMessage());
+        } finally {
+            if (fileInputStream != null) {
+                try {
+                    fileInputStream.close();
+                } catch (IOException e) {
+                    Log_OC.e(TAG, "Error getting MD5 checksum for file", e);
+                }
+            }
         }
 
         return "";
     }
 
-    public static ArrayList<String> getRandomWords(int count, Context context) throws IOException {
+    public static List<String> getRandomWords(int count, Context context) throws IOException {
         InputStream ins = context.getResources().openRawResource(context.getResources()
                 .getIdentifier("encryption_key_words", "raw", context.getPackageName()));
 
@@ -598,7 +607,7 @@ public class EncryptionUtils {
 
         BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 
-        ArrayList<String> lines = new ArrayList<>();
+        List<String> lines = new ArrayList<>();
         String line;
         while ((line = bufferedReader.readLine()) != null) {
             lines.add(line);
@@ -606,7 +615,7 @@ public class EncryptionUtils {
 
         SecureRandom random = new SecureRandom();
 
-        ArrayList<String> outputLines = new ArrayList<>();
+        List<String> outputLines = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             int randomLine = random.nextInt(lines.size());
             outputLines.add(lines.get(randomLine));
@@ -641,5 +650,56 @@ public class EncryptionUtils {
         random.nextBytes(iv);
 
         return iv;
+    }
+
+    /**
+     * Generate a SHA512 with appended salt
+     *
+     * @param token token to be hashed
+     * @return SHA512 with appended salt, delimiter HASH_DELIMITER
+     */
+    public static String generateSHA512(String token) {
+        String salt = EncryptionUtils.encodeBytesToBase64String(EncryptionUtils.randomBytes(EncryptionUtils.saltLength));
+
+        return generateSHA512(token, salt);
+    }
+
+    /**
+     * Generate a SHA512 with appended salt
+     *
+     * @param token token to be hashed
+     * @return SHA512 with appended salt, delimiter HASH_DELIMITER
+     */
+    public static String generateSHA512(String token, String salt) {
+        MessageDigest digest;
+        String hashedToken = "";
+        byte[] hash;
+        try {
+            digest = MessageDigest.getInstance("SHA-512");
+            digest.update(salt.getBytes());
+            hash = digest.digest(token.getBytes());
+
+            StringBuilder stringBuilder = new StringBuilder();
+            for (byte hashByte : hash) {
+                stringBuilder.append(Integer.toString((hashByte & 0xff) + 0x100, 16).substring(1));
+            }
+
+            stringBuilder.append(HASH_DELIMITER).append(salt);
+
+            hashedToken = stringBuilder.toString();
+
+        } catch (NoSuchAlgorithmException e) {
+            Log_OC.e(TAG, "Generating SHA512 failed", e);
+        }
+
+        return hashedToken;
+    }
+
+    public static boolean verifySHA512(String hashWithSalt, String compareToken) {
+        String salt = hashWithSalt.split("\\" + HASH_DELIMITER)[1];
+
+        String newHash = generateSHA512(compareToken, salt);
+
+        return hashWithSalt.equals(newHash);
     }
 }

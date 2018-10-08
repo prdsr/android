@@ -3,9 +3,6 @@
     <string name="about_android">%1$s для Android</string>
     <string name="about_version">версия %1$s</string>
     <string name="actionbar_sync">Обновить</string>
-    <string name="actionbar_upload">Отправить</string>
-    <string name="actionbar_upload_from_apps">Содержимое из других приложений</string>
-    <string name="actionbar_upload_files">Файлы</string>
     <string name="actionbar_open_with">Открыть с помощью</string>
     <string name="actionbar_mkdir">Создать папку</string>
     <string name="actionbar_settings">Настройки</string>
@@ -34,6 +31,7 @@
     <string name="drawer_item_activities">События</string>
     <string name="drawer_item_notifications">Уведомления</string>
     <string name="drawer_quota">использовано %1$s из %2$s </string>
+    <string name="drawer_quota_unlimited">%1$s использовано</string>
 	<string name="drawer_close">Закрыть боковую панель</string>
     <string name="drawer_open">Открыть боковую панель</string>
     <string name="prefs_category_general">Основные</string>
@@ -68,7 +66,6 @@
     <string name="auth_host_url">Адрес сервера https://…</string>
     <string name="auth_username">Имя пользователя</string>
     <string name="auth_password">Пароль</string>
-    <string name="auth_register">Нет своей учётной записи Nextcloud?\nНажмите здесь для заказа</string>
     <string name="sync_string_files">Файлы</string>
     <string name="setup_btn_connect">Подключиться</string>
     <string name="uploader_btn_upload_text">Отправить</string>
@@ -371,7 +368,6 @@
     <string name="activity_chooser_send_file_title">Отправить</string>
 
     <string name="copy_link">Копировать ссылку</string>
-    <string name="clipboard_text_copied">Скопировано в буфер обмена</string>
     <string name="clipboard_no_text_to_copy">Нет принятого текста для копирования в буфер обмена</string>
     <string name="clipboard_unexpected_error">Неожиданная ошибка во время копирования в буфер обмена</string>
     <string name="clipboard_label">Текст скопирован из %1$s</string>
@@ -514,6 +510,7 @@
     <string name="share_group_clarification">%1$s (группа)</string>
     <string name="share_remote_clarification">%1$s (на сервере)</string>
     <string name="share_email_clarification">%1$s (email)</string>
+    <string name="share_room_clarification">%1$s (беседа)</string>
     <string name="share_known_remote_clarification">%1$s ( в %2$s )</string>
 
     <string name="share_sharee_unavailable">Установленная на сервере устаревшая версия Nextcloud не позволяет предоставлять общий доступ используя приложения-клиенты. Обратитесь к своему администратору</string>
@@ -599,24 +596,6 @@
 
     <!-- What's new feature and texts to show -->
     <string name="whats_new_title">Новое в %1$s</string>
-
-    <!-- Welcome to Nc intro features -->
-    <string name="welcome_feature_1_title">Надежный дом для всех ваших данных</string>
-    <string name="welcome_feature_1_text">Доступ, общий доступ и защита ваших файлов для дома и предприятия</string>
-
-    <string name="welcome_feature_2_title">Работа с несколькими аккаунтами</string>
-    <string name="welcome_feature_2_text">Доступ ко всем вашим облакам</string>
-
-    <string name="welcome_feature_3_title">Автоматическая передача файлов на сервер</string>
-    <string name="welcome_feature_3_text">Держите ваши фотографии в безопасности</string>
-
-    <string name="whats_new_end_to_end_encryption_title">Оконечное шифрование</string>
-    <string name="whats_new_end_to_end_encryption_content">Нажмите, чтобы зашифровать, от любого клиента. Добавьте новые, скопировав 12 слов.</string>
-    <string name="whats_new_resized_images_title">Адаптивные изображения</string>
-    <string name="whats_new_resized_images_content">Уменьшенные изображения быстрее работают и лучше передаются. Увеличьте для загрузки полной версии</string>
-    <string name="whats_new_ipv6_title">Поддержка протокола IPv6</string>
-    <string name="whats_new_ipv6_content">IPv6, если сервер поддерживает, IPv4, если нет</string>
-
     <string name="whats_new_skip">Пропустить</string>
 
     <!-- User information -->
@@ -791,6 +770,11 @@
     <string name="prefs_e2e_mnemonic">Мнемофраза E2E</string>
     <string name="prefs_e2e_no_device_credentials">Для просмотра мнемофразы включите системную защитную блокировку.</string>
     <string name="whats_new_device_credentials_title">Использовать системные средства защиты</string>
+    <string name="login">Войти</string>
+    <string name="signup_with_provider">Подключиться через провайдера</string>
+    <string name="host_your_own_server">Разместите ваш собственный сервер</string>
+    <string name="first_run_1_text">Храните ваши данные в безопасности и под вашим контролем.</string>
+    <string name="first_run_3_text">Легкие в использовании почта, календари &amp; контакты</string>
     <string name="whats_new_device_credentials_content">Для защиты данных могут быть использованы пароль, ПИН, защитный узор или отпечаток пальца.</string>
     <string name="restore_button_description">Восстановить удаленный файл</string>
 	<string name="restore">Восстановить файл</string>
@@ -804,7 +788,6 @@
     <string name="new_media_folder_detected">Обнаружена новая папка с фото или видеофайлами: «%1$s».</string>
     <string name="new_media_folder_photos">фото</string>
     <string name="new_media_folder_videos">видео</string>
-
     <string name="outdated_server">Версия сервера Nextcloud  более не поддерживается, требуется её обновление.</string>
     <string name="dismiss">Отклонить</string>
     <string name="feedback_no_mail_app">Нет приложения для отправки писем!</string>
@@ -825,4 +808,4 @@
     <string name="file_keep">Сохранить</string>
     <string name="file_rename">Переименовать</string>
     <string name="fab_label">Добавить или выгрузить</string>
-</resources>
+    </resources>

@@ -34,6 +34,7 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -64,6 +65,7 @@ import com.owncloud.android.authentication.AccountUtils;
 import com.owncloud.android.authentication.PassCodeManager;
 import com.owncloud.android.datamodel.ArbitraryDataProvider;
 import com.owncloud.android.datamodel.ExternalLinksProvider;
+import com.owncloud.android.datamodel.FileDataStorageManager;
 import com.owncloud.android.datamodel.OCFile;
 import com.owncloud.android.lib.common.ExternalLink;
 import com.owncloud.android.lib.common.ExternalLinkType;
@@ -79,7 +81,7 @@ import com.owncloud.android.lib.resources.status.CapabilityBooleanType;
 import com.owncloud.android.lib.resources.status.OCCapability;
 import com.owncloud.android.lib.resources.status.OwnCloudVersion;
 import com.owncloud.android.lib.resources.users.GetRemoteUserInfoOperation;
-import com.owncloud.android.operations.GetCapabilitiesOperarion;
+import com.owncloud.android.operations.GetCapabilitiesOperation;
 import com.owncloud.android.ui.TextDrawable;
 import com.owncloud.android.ui.activities.ActivitiesActivity;
 import com.owncloud.android.ui.events.AccountRemovedEvent;
@@ -87,6 +89,7 @@ import com.owncloud.android.ui.events.ChangeMenuEvent;
 import com.owncloud.android.ui.events.DummyDrawerEvent;
 import com.owncloud.android.ui.events.MenuItemClickEvent;
 import com.owncloud.android.ui.events.SearchEvent;
+import com.owncloud.android.ui.fragment.OCFileListFragment;
 import com.owncloud.android.ui.trashbin.TrashbinActivity;
 import com.owncloud.android.utils.DisplayUtils;
 import com.owncloud.android.utils.DrawerMenuUtil;
@@ -97,6 +100,7 @@ import com.owncloud.android.utils.svg.MenuSimpleTarget;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.parceler.Parcels;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -304,7 +308,7 @@ public abstract class DrawerActivity extends ToolbarActivity implements DisplayU
         mQuotaProgressBar = (ProgressBar) findQuotaViewById(R.id.drawer_quota_ProgressBar);
         mQuotaTextPercentage = (TextView) findQuotaViewById(R.id.drawer_quota_percentage);
         mQuotaTextLink = (TextView) findQuotaViewById(R.id.drawer_quota_link);
-        ThemeUtils.colorHorizontalProgressBar(mQuotaProgressBar, ThemeUtils.primaryAccentColor(this));
+        ThemeUtils.colorProgressBar(mQuotaProgressBar, ThemeUtils.primaryColor(this));
     }
 
     /**
@@ -344,9 +348,16 @@ public abstract class DrawerActivity extends ToolbarActivity implements DisplayU
     }
 
     private void filterDrawerMenu(Menu menu, Account account) {
+        OCCapability capability = null;
+        if (account != null) {
+            FileDataStorageManager storageManager = new FileDataStorageManager(account, getContentResolver());
+            capability = storageManager.getCapability(account.name);
+        }
+        
         DrawerMenuUtil.filterForBottomToolbarMenuItems(menu, getResources());
         DrawerMenuUtil.filterSearchMenuItems(menu, account, getResources());
-        DrawerMenuUtil.filterTrashbinMenuItems(menu, account, getContentResolver());
+        DrawerMenuUtil.filterTrashbinMenuItem(menu, account, capability);
+        DrawerMenuUtil.filterActivityMenuItem(menu, capability);
 
         DrawerMenuUtil.setupHomeMenuItem(menu, getResources());
 
@@ -394,12 +405,12 @@ public abstract class DrawerActivity extends ToolbarActivity implements DisplayU
                 EventBus.getDefault().post(new ChangeMenuEvent());
                 break;
             case R.id.nav_favorites:
-                EventBus.getDefault().post(new SearchEvent("", SearchOperation.SearchType.FAVORITE_SEARCH,
-                        SearchEvent.UnsetType.NO_UNSET));
+                handleSearchEvents(new SearchEvent("", SearchOperation.SearchType.FAVORITE_SEARCH,
+                        SearchEvent.UnsetType.NO_UNSET), menuItem.getItemId());
                 break;
             case R.id.nav_photos:
-                EventBus.getDefault().post(new SearchEvent("image/%", SearchOperation.SearchType.CONTENT_TYPE_SEARCH,
-                        SearchEvent.UnsetType.NO_UNSET));
+                handleSearchEvents(new SearchEvent("image/%", SearchOperation.SearchType.CONTENT_TYPE_SEARCH,
+                        SearchEvent.UnsetType.NO_UNSET), menuItem.getItemId());
                 break;
             case R.id.nav_on_device:
                 EventBus.getDefault().post(new ChangeMenuEvent());
@@ -446,27 +457,36 @@ public abstract class DrawerActivity extends ToolbarActivity implements DisplayU
                 UserInfoActivity.openAccountRemovalConfirmationDialog(getAccount(), getFragmentManager(), true);
                 break;
             case R.id.drawer_menu_account_add:
-                createAccount(false);
+                boolean isProviderOrOwnInstallationVisible = getResources()
+                        .getBoolean(R.bool.show_provider_or_own_installation);
+
+                if (isProviderOrOwnInstallationVisible) {
+                    Intent firstRunIntent = new Intent(getApplicationContext(), FirstRunActivity.class);
+                    firstRunIntent.putExtra(FirstRunActivity.EXTRA_ALLOW_CLOSE, true);
+                    startActivity(firstRunIntent);
+                } else {
+                    createAccount(false);
+                }
                 break;
             case R.id.drawer_menu_account_manage:
                 Intent manageAccountsIntent = new Intent(getApplicationContext(), ManageAccountsActivity.class);
                 startActivityForResult(manageAccountsIntent, ACTION_MANAGE_ACCOUNTS);
                 break;
             case R.id.nav_recently_added:
-                EventBus.getDefault().post(new SearchEvent("%", SearchOperation.SearchType.CONTENT_TYPE_SEARCH,
-                        SearchEvent.UnsetType.UNSET_BOTTOM_NAV_BAR));
+                handleSearchEvents(new SearchEvent("%", SearchOperation.SearchType.CONTENT_TYPE_SEARCH,
+                        SearchEvent.UnsetType.UNSET_BOTTOM_NAV_BAR), menuItem.getItemId());
                 break;
             case R.id.nav_recently_modified:
-                EventBus.getDefault().post(new SearchEvent("", SearchOperation.SearchType.RECENTLY_MODIFIED_SEARCH,
-                        SearchEvent.UnsetType.UNSET_BOTTOM_NAV_BAR));
+                handleSearchEvents(new SearchEvent("", SearchOperation.SearchType.RECENTLY_MODIFIED_SEARCH,
+                        SearchEvent.UnsetType.UNSET_BOTTOM_NAV_BAR), menuItem.getItemId());
                 break;
             case R.id.nav_shared:
-                EventBus.getDefault().post(new SearchEvent("", SearchOperation.SearchType.SHARED_SEARCH,
-                        SearchEvent.UnsetType.UNSET_BOTTOM_NAV_BAR));
+                handleSearchEvents(new SearchEvent("", SearchOperation.SearchType.SHARED_SEARCH,
+                        SearchEvent.UnsetType.UNSET_BOTTOM_NAV_BAR), menuItem.getItemId());
                 break;
             case R.id.nav_videos:
-                EventBus.getDefault().post(new SearchEvent("video/%", SearchOperation.SearchType.CONTENT_TYPE_SEARCH,
-                        SearchEvent.UnsetType.UNSET_BOTTOM_NAV_BAR));
+                handleSearchEvents(new SearchEvent("video/%", SearchOperation.SearchType.CONTENT_TYPE_SEARCH,
+                        SearchEvent.UnsetType.UNSET_BOTTOM_NAV_BAR), menuItem.getItemId());
                 break;
             case Menu.NONE:
                 // account clicked
@@ -481,6 +501,19 @@ public abstract class DrawerActivity extends ToolbarActivity implements DisplayU
             externalLinkClicked(menuItem);
         } else {
             Log_OC.i(TAG, "Unknown drawer menu item clicked: " + menuItem.getTitle());
+        }
+    }
+
+    private void handleSearchEvents(SearchEvent searchEvent, int menuItemId) {
+        if (this instanceof FileDisplayActivity) {
+            EventBus.getDefault().post(searchEvent);
+        } else {
+            Intent intent = new Intent(getApplicationContext(), FileDisplayActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.setAction(Intent.ACTION_SEARCH);
+            intent.putExtra(OCFileListFragment.SEARCH_EVENT, Parcels.wrap(searchEvent));
+            intent.putExtra(FileDisplayActivity.DRAWER_MENU_ID, menuItemId);
+            startActivity(intent);
         }
     }
 
@@ -511,13 +544,16 @@ public abstract class DrawerActivity extends ToolbarActivity implements DisplayU
     private void externalLinkClicked(MenuItem menuItem){
         for (ExternalLink link : externalLinksProvider.getExternalLink(ExternalLinkType.LINK)) {
             if (menuItem.getTitle().toString().equalsIgnoreCase(link.name)) {
-                Intent externalWebViewIntent = new Intent(getApplicationContext(),
-                        ExternalSiteWebView.class);
-                externalWebViewIntent.putExtra(ExternalSiteWebView.EXTRA_TITLE, link.name);
-                externalWebViewIntent.putExtra(ExternalSiteWebView.EXTRA_URL, link.url);
-                externalWebViewIntent.putExtra(ExternalSiteWebView.EXTRA_SHOW_SIDEBAR, true);
-                externalWebViewIntent.putExtra(ExternalSiteWebView.EXTRA_MENU_ITEM_ID, menuItem.getItemId());
-                startActivity(externalWebViewIntent);
+                if (link.redirect) {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(link.url)));
+                } else {
+                    Intent externalWebViewIntent = new Intent(getApplicationContext(), ExternalSiteWebView.class);
+                    externalWebViewIntent.putExtra(ExternalSiteWebView.EXTRA_TITLE, link.name);
+                    externalWebViewIntent.putExtra(ExternalSiteWebView.EXTRA_URL, link.url);
+                    externalWebViewIntent.putExtra(ExternalSiteWebView.EXTRA_SHOW_SIDEBAR, true);
+                    externalWebViewIntent.putExtra(ExternalSiteWebView.EXTRA_MENU_ITEM_ID, menuItem.getItemId());
+                    startActivity(externalWebViewIntent);
+                }
             }
         }
     }
@@ -642,7 +678,7 @@ public abstract class DrawerActivity extends ToolbarActivity implements DisplayU
      *
      * @param accounts list of accounts
      */
-    private void repopulateAccountList(ArrayList<Account> accounts) {
+    private void repopulateAccountList(List<Account> accounts) {
         // remove all accounts from list
         mNavigationView.getMenu().removeGroup(R.id.drawer_menu_accounts);
 
@@ -792,22 +828,28 @@ public abstract class DrawerActivity extends ToolbarActivity implements DisplayU
 
     /**
      * configured the quota to be displayed.
-     *
-     * @param usedSpace  the used space
+     *  @param usedSpace  the used space
      * @param totalSpace the total space
      * @param relative   the percentage of space already used
+     * @param quotaValue {@link GetRemoteUserInfoOperation#SPACE_UNLIMITED} or other to determinate state
      */
-    private void setQuotaInformation(long usedSpace, long totalSpace, int relative) {
+    private void setQuotaInformation(long usedSpace, long totalSpace, int relative, long quotaValue) {
+        if (GetRemoteUserInfoOperation.SPACE_UNLIMITED == quotaValue) {
+            mQuotaTextPercentage.setText(String.format(
+                    getString(R.string.drawer_quota_unlimited),
+                    DisplayUtils.bytesToHumanReadable(usedSpace)));
+        } else {
+            mQuotaTextPercentage.setText(String.format(
+                    getString(R.string.drawer_quota),
+                    DisplayUtils.bytesToHumanReadable(usedSpace),
+                    DisplayUtils.bytesToHumanReadable(totalSpace)));
+        }
+
         mQuotaProgressBar.setProgress(relative);
-        ThemeUtils.colorHorizontalProgressBar(mQuotaProgressBar, DisplayUtils.getRelativeInfoColor(this, relative));
+
+        ThemeUtils.colorProgressBar(mQuotaProgressBar, DisplayUtils.getRelativeInfoColor(this, relative));
 
         updateQuotaLink();
-
-        mQuotaTextPercentage.setText(String.format(
-                getString(R.string.drawer_quota),
-                DisplayUtils.bytesToHumanReadable(usedSpace),
-                DisplayUtils.bytesToHumanReadable(totalSpace)));
-
         showQuota(true);
     }
 
@@ -919,13 +961,13 @@ public abstract class DrawerActivity extends ToolbarActivity implements DisplayU
         Thread t = new Thread(new Runnable() {
             public void run() {
                 Context context = MainApp.getAppContext();
-                AccountManager mAccountMgr = AccountManager.get(context);
                 Account account = AccountUtils.getCurrentOwnCloudAccount(context);
 
                 if (account == null) {
                     return;
                 }
 
+                AccountManager mAccountMgr = AccountManager.get(context);
                 String userId = mAccountMgr.getUserData(account,
                         com.owncloud.android.lib.common.accounts.AccountUtils.Constants.KEY_USER_ID);
 
@@ -958,16 +1000,16 @@ public abstract class DrawerActivity extends ToolbarActivity implements DisplayU
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                if (quotaValue > 0
+                                if (quotaValue > 0 || quotaValue == GetRemoteUserInfoOperation.SPACE_UNLIMITED
                                         || quotaValue == GetRemoteUserInfoOperation.QUOTA_LIMIT_INFO_NOT_AVAILABLE) {
-                                    /**
+                                    /*
                                      * show quota in case
                                      * it is available and calculated (> 0) or
                                      * in case of legacy servers (==QUOTA_LIMIT_INFO_NOT_AVAILABLE)
                                      */
-                                    setQuotaInformation(used, total, relative);
+                                    setQuotaInformation(used, total, relative, quotaValue);
                                 } else {
-                                    /**
+                                    /*
                                      * quotaValue < 0 means special cases like
                                      * {@link RemoteGetUserQuotaOperation.SPACE_NOT_COMPUTED},
                                      * {@link RemoteGetUserQuotaOperation.SPACE_UNKNOWN} or
@@ -1355,11 +1397,11 @@ public abstract class DrawerActivity extends ToolbarActivity implements DisplayU
                 // fetch capabilities as early as possible
                 if ((getCapabilities() == null || getCapabilities().getAccountName().isEmpty())
                         && getStorageManager() != null) {
-                    GetCapabilitiesOperarion getCapabilities = new GetCapabilitiesOperarion();
+                    GetCapabilitiesOperation getCapabilities = new GetCapabilitiesOperation();
                     getCapabilities.execute(getStorageManager(), getBaseContext());
                 }
 
-                Account account = AccountUtils.getCurrentOwnCloudAccount(DrawerActivity.this);
+                Account account = AccountUtils.getCurrentOwnCloudAccount(this);
 
                 if (account != null && getStorageManager() != null &&
                         getStorageManager().getCapability(account.name) != null &&
@@ -1378,7 +1420,7 @@ public abstract class DrawerActivity extends ToolbarActivity implements DisplayU
 
                         Log_OC.d("ExternalLinks", "update via api");
                         RemoteOperation getExternalLinksOperation = new ExternalLinksOperation();
-                        RemoteOperationResult result = getExternalLinksOperation.execute(account, DrawerActivity.this);
+                        RemoteOperationResult result = getExternalLinksOperation.execute(account, this);
 
                         if (result.isSuccess() && result.getData() != null) {
                             externalLinksProvider.deleteAllExternalLinks();

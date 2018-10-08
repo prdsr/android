@@ -1,4 +1,4 @@
-/**
+/*
  *   ownCloud Android client application
  *
  *   @author David A. Velasco
@@ -82,11 +82,12 @@ public class UploadFilesActivity extends FileActivity implements
         OnClickListener, ConfirmationDialogFragmentListener, SortingOrderDialogFragment.OnSortingOrderListener {
 
     private static final String SORT_ORDER_DIALOG_TAG = "SORT_ORDER_DIALOG";
+    private static final int SINGLE_DIR = 1;
 
     private ArrayAdapter<String> mDirectories;
-    private File mCurrentDir = null;
-    private boolean mSelectAll = false;
-    private boolean mLocalFolderPickerMode = false;
+    private File mCurrentDir;
+    private boolean mSelectAll;
+    private boolean mLocalFolderPickerMode;
     private LocalFileListFragment mFileListFragment;
     protected Button mUploadBtn;
     private Spinner mBehaviourSpinner;
@@ -125,12 +126,22 @@ public class UploadFilesActivity extends FileActivity implements
             mLocalFolderPickerMode = extras.getBoolean(KEY_LOCAL_FOLDER_PICKER_MODE, false);
         }
 
-        if(savedInstanceState != null) {
+        if (savedInstanceState != null) {
             mCurrentDir = new File(savedInstanceState.getString(UploadFilesActivity.KEY_DIRECTORY_PATH, Environment
                     .getExternalStorageDirectory().getAbsolutePath()));
             mSelectAll = savedInstanceState.getBoolean(UploadFilesActivity.KEY_ALL_SELECTED, false);
         } else {
-            mCurrentDir = Environment.getExternalStorageDirectory();
+            String lastUploadFrom = PreferenceManager.getUploadFromLocalLastPath(this);
+
+            if (!lastUploadFrom.isEmpty()) {
+                mCurrentDir = new File(lastUploadFrom);
+
+                while (!mCurrentDir.exists()) {
+                    mCurrentDir = mCurrentDir.getParentFile();
+                }
+            } else {
+                mCurrentDir = Environment.getExternalStorageDirectory();
+            }
         }
         
         mAccountOnCreation = getAccount();
@@ -333,7 +344,7 @@ public class UploadFilesActivity extends FileActivity implements
             mSearchView.onActionViewCollapsed();
             setDrawerIndicatorEnabled(isDrawerIndicatorAvailable());
         } else {
-            if (mDirectories.getCount() <= 1) {
+            if (mDirectories.getCount() <= SINGLE_DIR) {
                 finish();
                 return;
             }
@@ -486,9 +497,11 @@ public class UploadFilesActivity extends FileActivity implements
             finish();
 
         } else if (v.getId() == R.id.upload_files_btn_upload) {
-            if(mLocalFolderPickerMode) {
+            PreferenceManager.setUploadFromLocalLastPath(this, mCurrentDir.getAbsolutePath());
+
+            if (mLocalFolderPickerMode) {
                 Intent data = new Intent();
-                if(mCurrentDir != null) {
+                if (mCurrentDir != null) {
                     data.putExtra(EXTRA_CHOSEN_FILES, mCurrentDir.getAbsolutePath());
                 }
                 setResult(RESULT_OK, data);

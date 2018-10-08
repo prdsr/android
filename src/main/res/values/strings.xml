@@ -3,9 +3,6 @@
     <string name="about_android">%1$s Android app</string>
     <string name="about_version">version %1$s</string>
     <string name="actionbar_sync">Refresh account</string>
-    <string name="actionbar_upload">Upload</string>
-    <string name="actionbar_upload_from_apps">Content from other apps</string>
-    <string name="actionbar_upload_files">Files</string>
     <string name="actionbar_open_with">Open with</string>
     <string name="actionbar_mkdir">New folder</string>
     <string name="actionbar_settings">Settings</string>
@@ -34,6 +31,7 @@
     <string name="drawer_item_activities">Activities</string>
     <string name="drawer_item_notifications">Notifications</string>
     <string name="drawer_quota">%1$s of %2$s used</string>
+    <string name="drawer_quota_unlimited">%1$s used</string>
 	<string name="drawer_close">Close sidebar</string>
     <string name="drawer_open">Open sidebar</string>
     <string name="prefs_category_general">General</string>
@@ -68,7 +66,6 @@
     <string name="auth_host_url">Server address https://…</string>
     <string name="auth_username">Username</string>
     <string name="auth_password">Password</string>
-    <string name="auth_register">No Nextcloud yet?\nClick here to get one from a provider</string>
     <string name="sync_string_files">Files</string>
     <string name="setup_btn_connect">Connect</string>
     <string name="uploader_btn_upload_text">Upload</string>
@@ -368,7 +365,7 @@
     <string name="activity_chooser_send_file_title">Send</string>
 
     <string name="copy_link">Copy link</string>
-    <string name="clipboard_text_copied">Copied to clipboard</string>
+    <string name="clipboard_text_copied">Link copied</string>
     <string name="clipboard_no_text_to_copy">Received no text to copy to clipboard</string>
     <string name="clipboard_unexpected_error">Unexpected error while copying to clipboard</string>
     <string name="clipboard_label">Text copied from %1$s</string>
@@ -507,6 +504,7 @@
     <string name="share_group_clarification">%1$s (group)</string>
     <string name="share_remote_clarification">%1$s (remote)</string>
     <string name="share_email_clarification">%1$s (email)</string>
+    <string name="share_room_clarification">%1$s (conversation)</string>
     <string name="share_known_remote_clarification">%1$s ( at %2$s )</string>
 
     <string name="share_sharee_unavailable">Upgrade the server version to allow sharing between users from within their clients.\nPlease contact your admin</string>
@@ -602,24 +600,6 @@
 
     <!-- What's new feature and texts to show -->
     <string name="whats_new_title">New in %1$s</string>
-
-    <!-- Welcome to Nc intro features -->
-    <string name="welcome_feature_1_title">A safe home for all your data</string>
-    <string name="welcome_feature_1_text">Access, share and protect your files at home and at work</string>
-
-    <string name="welcome_feature_2_title">Multi account</string>
-    <string name="welcome_feature_2_text">Connect to all your clouds</string>
-
-    <string name="welcome_feature_3_title">Auto upload</string>
-    <string name="welcome_feature_3_text">Keep your photos safe</string>
-
-    <string name="whats_new_end_to_end_encryption_title">End-to-end encryption</string>
-    <string name="whats_new_end_to_end_encryption_content">Tap to encrypt, from any client. Add new ones by copying 12 words over.</string>
-    <string name="whats_new_resized_images_title">Adaptive images</string>
-    <string name="whats_new_resized_images_content">Small images are fast and work great for sharing. Zoom in to download a full version.</string>
-    <string name="whats_new_ipv6_title">IPv6 support</string>
-    <string name="whats_new_ipv6_content">IPv6 when the server supports it, IPv4 if not.</string>
-
     <string name="whats_new_skip">Skip</string>
 
     <!-- User information -->
@@ -797,6 +777,13 @@
     <string name="prefs_e2e_mnemonic">E2E mnemonic</string>
     <string name="prefs_e2e_no_device_credentials">To show mnemonic please enable device credentials.</string>
     <string name="whats_new_device_credentials_title">Use Android\'s device internal protection</string>
+    <string name="login">Log in</string>
+    <string name="signup_with_provider">Sign up with provider</string>
+    <string name="host_your_own_server">Host your own server</string>
+    <string name="first_run_1_text">Keep your data secure and under your control</string>
+    <string name="first_run_2_text">Secure collaboration &amp; file exchange</string>
+    <string name="first_run_3_text">Easy-to-use web mail, calendering &amp; contacts</string>
+    <string name="first_run_4_text">Screensharing, online meetings &amp; web conferences</string>
     <string name="whats_new_device_credentials_content">Use anything like a pattern, password, pin or your fingerprint to keep your data safe.</string>
     <string name="restore_button_description">Restore deleted file</string>
 	<string name="restore">Restore file</string>
@@ -810,7 +797,6 @@
     <string name="new_media_folder_detected">New %1$s media folder detected.</string>
     <string name="new_media_folder_photos">photo</string>
     <string name="new_media_folder_videos">video</string>
-
     <string name="outdated_server">The server has reached end of life, please upgrade!</string>
     <string name="dismiss">Dismiss</string>
     <string name="feedback_no_mail_app">No app available to send mails!</string>
@@ -831,4 +817,10 @@
     <string name="file_keep">Keep</string>
     <string name="file_rename">Rename</string>
     <string name="fab_label">Add or upload</string>
+    <string name="account_creation_failed">Account creation failed</string>
+
+    <string name="single_sign_on_request_token" formatted="true">Allow %1$s to access your Nextcloud account %2$s?</string>
+    <string name="permission_deny">Deny</string>
+    <string name="permission_allow">Allow</string>
+
 </resources>

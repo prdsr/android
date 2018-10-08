@@ -3,9 +3,6 @@
     <string name="about_android">יישום אנדרואיד %1$s</string>
     <string name="about_version">גרסה %1$s</string>
     <string name="actionbar_sync">רענון חשבון</string>
-    <string name="actionbar_upload">העלאה</string>
-    <string name="actionbar_upload_from_apps">תוכן מיישומים אחרים</string>
-    <string name="actionbar_upload_files">קבצים</string>
     <string name="actionbar_open_with">פתיחה על בסיס</string>
     <string name="actionbar_mkdir">תיקייה חדשה</string>
     <string name="actionbar_settings">הגדרות</string>
@@ -34,6 +31,7 @@
     <string name="drawer_item_activities">פעילויות</string>
     <string name="drawer_item_notifications">התרעות</string>
     <string name="drawer_quota">נעשה שימוש ב־%1$s מתוך %2$s</string>
+    <string name="drawer_quota_unlimited">%1$s בשימוש</string>
 	<string name="drawer_close">סגירת סרגל הצד</string>
     <string name="drawer_open">פתיחת סרגל הצד</string>
     <string name="prefs_category_general">כללי</string>
@@ -68,7 +66,6 @@
     <string name="auth_host_url">כתובת שרת https://…</string>
     <string name="auth_username">שם משתמש</string>
     <string name="auth_password">ססמה</string>
-    <string name="auth_register">אין לך Nextcloud עדיין?\nניתן ללחוץ כאן כדי לקבל אחד מספק</string>
     <string name="sync_string_files">קבצים</string>
     <string name="setup_btn_connect">התחברות</string>
     <string name="uploader_btn_upload_text">העלאה</string>
@@ -187,7 +184,19 @@
     <string name="sync_fail_content_unauthorized">ססמה שגויה עבור %1$s</string>
     <string name="sync_conflicts_in_favourites_ticker">נמצאו התנגשויות</string>
     <string name="sync_fail_in_favourites_ticker">קבצים שהוגדרו לסנכרון נכשלו</string>
+    <plurals name="sync_fail_in_favourites_content">
+        <item quantity="one">לא ניתן לסנכן את קובץ %1$d (התנגשות %2$d)</item>
+        <item quantity="two">לא ניתן לסנכרן את ה %1$d קבצים  (התנגשות: %2$d)</item>
+        <item quantity="many">לא ניתן לסנכרן %1$d קבצים  (התגשות: %2$d)</item>
+        <item quantity="other">לא ניתן לסנכרן %1$d קבצים (התגשות: %2$d)</item>
+    </plurals>
     <string name="sync_foreign_files_forgotten_ticker">חלק מהקבצים המקומיים נשכחו</string>
+    <plurals name="sync_foreign_files_forgotten_content">
+        <item quantity="one">נכשל בהתעקה של קובץ %1$d מתיקייה %2$s לתוך</item>
+        <item quantity="two">נכשל בהתעקה של %1$d קבצים מתיקייה %2$s לתוך</item>
+        <item quantity="many">נכשל בהתעקה של %1$d קבצים מתיקייה %2$s לתוך</item>
+        <item quantity="other">נכשל בהתעקה של %1$d קובצים מתיקייה %2$s לתוך</item>
+    </plurals>
     <string name="sync_current_folder_was_removed">התיקייה %1$s לא קיימת יותר</string>
     <string name="foreign_files_move">להעביר הכול</string>
     <string name="foreign_files_success">כל הקבצים הועברו</string>
@@ -328,7 +337,9 @@
     <string name="auto_upload_on_wifi">להעלות רק ברשת אלחוטית ללא מדידת כמות</string>
     <string name="instant_upload_on_charging">להעלות רק בעת טעינה</string>
     <string name="instant_upload_path">/InstantUpload</string>
+    <string name="auto_upload_path">/העלאה אוטומטית</string>
     <string name="conflict_title">התנגשות בין קבצים</string>
+    <string name="conflict_message">איזה קבצים לשמור? אם יבחרו שתי הגרסאות, הקובץ המקומי יקבל מספר שיצורף לשמו.</string>
     <string name="conflict_keep_both">להשאיר את שניהם</string>
     <string name="conflict_use_local_version">גרסה מקומית</string>
     <string name="conflict_use_server_version">גרסת שרת</string>
@@ -356,14 +367,15 @@
     <string name="activity_chooser_send_file_title">שליחה</string>
 
     <string name="copy_link">העתקת קישור</string>
-    <string name="clipboard_text_copied">הועתק ללוח הגזירים - clipboard</string>
     <string name="clipboard_no_text_to_copy">לא התקבל טקסט להעתקה ללוח הגזירים</string>
+    <string name="clipboard_unexpected_error">אירעה שגיאה בזמן העתקה ללוח</string>
     <string name="clipboard_label">טקסט הועתק מ- %1$s</string>
 
     <string name="error_cant_bind_to_operations_service">שגיאה משמעותית: לא ניתן לבצע פעולות</string>
 
     <string name="network_error_socket_exception">אירעה שגיאה במהלך ההתחברות לשרת</string>
     <string name="network_error_socket_timeout_exception">אירעה שגיאה בעת המתנה לשרת. לא ניתן להשלים את הפעולה</string>
+    <string name="network_error_connect_timeout_exception">שגיאה אירעה בזמן המתנה לשרת. הפעולה לא הושלמה.</string>
     <string name="network_host_not_available">לא ניתן להשלים את הפעולה. השרת אינו זמין</string>
 
     <string name="forbidden_permissions">אין לך הרשאה %s</string>
@@ -377,8 +389,12 @@
     <string name="downloader_download_file_not_found">הקובץ אינו זמין יותר על השרת</string>
 
     <string name="file_migration_dialog_title">נתיב האחסון מתעדכן</string>
+    <string name="file_migration_preparing">מתכונן להעברה…</string>
+    <string name="file_migration_checking_destination">בודק יעד…</string>
+    <string name="file_migration_saving_accounts_configuration">שומר עדכוני חשבון…</string>
     <string name="file_migration_waiting_for_unfinished_sync">בהמתנה לסנכרון מלא…</string>
     <string name="file_migration_migrating">הנתונים מועברים…</string>
+    <string name="file_migration_updating_index">מעדכן אינדקס…</string>
     <string name="file_migration_cleaning">מתבצע ניקיון…</string>
     <string name="file_migration_restoring_accounts_configuration">תצורת החשבון משוחזרת…</string>
     <string name="file_migration_ok_finished">הסתיים</string>
@@ -386,6 +402,9 @@
     <string name="file_migration_failed_not_writable">לא ניתן לכתוב אל קובץ היעד</string>
     <string name="file_migration_failed_not_readable">לא ניתן לקרוא את קובץ המקור</string>
     <string name="file_migration_failed_dir_already_exists">תיקיית ה־Nextcloud כבר קיימת</string>
+    <string name="file_migration_failed_while_coping">נכשל במהלך העברה</string>
+    <string name="file_migration_failed_while_updating_index">נכשל בעדכון אינדקס</string>
+
     <string name="file_migration_directory_already_exists">תיקיית הנתונים כבר קיימת. נא לבחור את אחד מהבאים:</string>
     <string name="file_migration_override_data_folder">החלפה</string>
     <string name="file_migration_use_data_folder">שימוש</string>
@@ -509,6 +528,7 @@
     <string name="action_switch_list_view">תצוגת רשימה</string>
 
     <string name="manage_space_title">ניהול מקום</string>
+    <string name="manage_space_description">הגדרות, מסד נתונים ואישורי שרת של מידע %1$s ימחק לחלוטין. \n\nקבצים שירדו ישארו ללא שינוי.\n\nהתהליך ימשך זמן מה.</string>
     <string name="manage_space_clear_data">ניקוי מידע</string>
 
     <string name="permission_storage_access">נדרשות הרשאות נוספות כדי להעלות ולהוריד קבצים</string>
@@ -546,6 +566,14 @@
     <string name="synced_folders_loading_folders">התיקיות נטענות…</string>
     <string name="synced_folders_no_results">לא נמצאו תיקיות מדיה</string>
     <string name="synced_folders_preferences">העדפות להעלאה אוטומטית</string>
+    <string name="synced_folders_preferences_folder_path">עבור %1$s</string>
+    <plurals name="items_selected_count">
+        <item quantity="one">נבחר %d</item>
+        <item quantity="two">%d נבחרו</item>
+        <item quantity="many">%d נבחרו</item>
+        <item quantity="other">%d נבחרו</item>
+    </plurals>
+
     <string name="notifications_loading_activity">ההתרעות נטענות…</string>
     <string name="notifications_no_results_headline">אין התרעות</string>
     <string name="notifications_no_results_message">נא לבדוק שוב מאוחר יותר.</string>
@@ -560,24 +588,6 @@
 
     <!-- What's new feature and texts to show -->
     <string name="whats_new_title">חדש ב־%1$s</string>
-
-    <!-- Welcome to Nc intro features -->
-    <string name="welcome_feature_1_title">בית בטוח לכל הנתונים שלך</string>
-    <string name="welcome_feature_1_text">גישה, שיתוף והגנה על הקבצים שלך בבית ובעבודה</string>
-
-    <string name="welcome_feature_2_title">חשבונות מרובים</string>
-    <string name="welcome_feature_2_text">התחברות לכל העננים שלך</string>
-
-    <string name="welcome_feature_3_title">העלאה אוטומטית</string>
-    <string name="welcome_feature_3_text">הגנה על התמונות שלך</string>
-
-    <string name="whats_new_end_to_end_encryption_title">הצפנה מקצה לקצה</string>
-    <string name="whats_new_end_to_end_encryption_content">יש לגעת כדי להצפין, מכל לקוח. ניתן להוסיף חדשות על ידי העתקת 12 מילים ממקום למקום.</string>
-    <string name="whats_new_resized_images_title">תמונות מסתגלות</string>
-    <string name="whats_new_resized_images_content">תמונות קטנות הן מהירות ועובדות נהדר בשיתוף. ניתן להתקרב כדי להוריד גרסה מלאה.</string>
-    <string name="whats_new_ipv6_title">תמיכה ב־IPv6</string>
-    <string name="whats_new_ipv6_content">שימוש ב־IPv6 כאשר השרת תומך בזה, אם לא אז IPv4.</string>
-
     <string name="whats_new_skip">דלג</string>
 
     <!-- User information -->
@@ -673,6 +683,7 @@
     <string name="forward">העברה</string>
     <string name="what_s_new_image">תמונת מה חדש</string>
 
+    <string name="prefs_category_dev">פיתוח</string>
     <string name="dev_version_no_information_available">אין מידע זמין.</string>
     <string name="dev_version_no_new_version_available">לא קיימת גרסה חדשה.</string>
     <string name="folder_icon">סמל תיקייה</string>
@@ -739,7 +750,15 @@
     <string name="sharee_add_failed">הוספת נמען השיתוף נכשלה</string>
     <string name="unsharing_failed">ביטול השיתוף נכשל</string>
     <string name="updating_share_failed">עדכון השיתוף נכשל</string>
+    <string name="prefs_e2e_no_device_credentials">על מנת להציג שינון, הפעל את אישורי המכשיר.</string>
     <string name="whats_new_device_credentials_title">שימוש בהגנה הפנימית של מכשיר ה־Android שלך</string>
+    <string name="login">כניסה</string>
+    <string name="signup_with_provider">נא להירשם עם ספק</string>
+    <string name="host_your_own_server">אירוח שרת משלך</string>
+    <string name="first_run_1_text">ניתן להשאיר את הנתונים שלך מאובטחים ותחת שליטה</string>
+    <string name="first_run_2_text">שיתוף פעולה והעברת קבצים באופן מאובטח</string>
+    <string name="first_run_3_text">אתר מייל, לוח שנה ואנשי קשר נוחים לשימוש</string>
+    <string name="first_run_4_text">שיתוף מסך, פגישות מקוונות וכנסים מקוונים</string>
     <string name="whats_new_device_credentials_content">להשתמש בכל דבר כגון תבנית נעילה, ססמה, קוד או טביעת אצבע כדי לאבטח את המידע שלך.</string>
     <string name="restore_button_description">שחזור קובץ שנמחק</string>
 	<string name="restore">שחזור קובץ</string>
@@ -753,7 +772,6 @@
     <string name="new_media_folder_detected">זוהתה תיקיית מדיה עם %1$s</string>
     <string name="new_media_folder_photos">תמונות</string>
     <string name="new_media_folder_videos">סרטונים</string>
-
     <string name="outdated_server">השרת הגיע לתום חייו, נא לשדרג!</string>
     <string name="dismiss">התעלמות</string>
     <string name="feedback_no_mail_app">אין יישומון זמין לשליחת הודעות בדוא״ל!</string>
@@ -774,4 +792,4 @@
     <string name="file_keep">שימור</string>
     <string name="file_rename">שינוי שם</string>
     <string name="fab_label">הוספה או העלאה</string>
-</resources>
+    </resources>

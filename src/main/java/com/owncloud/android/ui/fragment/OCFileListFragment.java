@@ -117,6 +117,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -151,6 +152,8 @@ public class OCFileListFragment extends ExtendedListFragment implements
 
     private static final String DIALOG_CREATE_FOLDER = "DIALOG_CREATE_FOLDER";
 
+    private static final int SINGLE_SELECTION = 1;
+
     private FileFragment.ContainerActivity mContainerActivity;
 
     private OCFile mFile;
@@ -180,7 +183,7 @@ public class OCFileListFragment extends ExtendedListFragment implements
 
     private MenuItemAddRemove menuItemAddRemoveValue = MenuItemAddRemove.DO_NOTHING;
 
-    private ArrayList<MenuItem> mOriginalMenuItems = new ArrayList<>();
+    private List<MenuItem> mOriginalMenuItems = new ArrayList<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -199,6 +202,22 @@ public class OCFileListFragment extends ExtendedListFragment implements
         }
 
         searchFragment = currentSearchType != null && searchEvent != null;
+    }
+
+    @Override
+    public void onResume() {
+        if (getActivity() == null) {
+            return;
+        }
+
+        Intent intent = getActivity().getIntent();
+
+        if (intent.getParcelableExtra(OCFileListFragment.SEARCH_EVENT) != null) {
+            searchEvent = Parcels.unwrap(intent.getParcelableExtra(OCFileListFragment.SEARCH_EVENT));
+            onMessageEvent(searchEvent);
+        }
+
+        super.onResume();
     }
 
     /**
@@ -265,7 +284,7 @@ public class OCFileListFragment extends ExtendedListFragment implements
         }
 
         Bundle args = getArguments();
-        boolean allowContextualActions = (args != null) && args.getBoolean(ARG_ALLOW_CONTEXTUAL_ACTIONS, false);
+        boolean allowContextualActions = args != null && args.getBoolean(ARG_ALLOW_CONTEXTUAL_ACTIONS, false);
         if (allowContextualActions) {
             setChoiceModeAsMultipleModal(savedInstanceState);
         }
@@ -306,19 +325,19 @@ public class OCFileListFragment extends ExtendedListFragment implements
         }
 
         Bundle args = getArguments();
-        mOnlyFoldersClickable = (args != null) && args.getBoolean(ARG_ONLY_FOLDERS_CLICKABLE, false);
-        boolean hideItemOptions = (args != null) && args.getBoolean(ARG_HIDE_ITEM_OPTIONS, false);
+        mOnlyFoldersClickable = args != null && args.getBoolean(ARG_ONLY_FOLDERS_CLICKABLE, false);
+        boolean hideItemOptions = args != null && args.getBoolean(ARG_HIDE_ITEM_OPTIONS, false);
 
         mAdapter = new OCFileListAdapter(getActivity(), mContainerActivity, this, hideItemOptions,
                 isGridViewPreferred(mFile));
         setRecyclerViewAdapter(mAdapter);
 
-        mHideFab = (args != null) && args.getBoolean(ARG_HIDE_FAB, false);
+        mHideFab = args != null && args.getBoolean(ARG_HIDE_FAB, false);
 
         if (mHideFab) {
-            setFabEnabled(false);
+            setFabVisible(false);
         } else {
-            setFabEnabled(true);
+            setFabVisible(true);
             registerFabListener();
         }
 
@@ -434,12 +453,12 @@ public class OCFileListFragment extends ExtendedListFragment implements
         /**
          * True when action mode is finished because the drawer was opened
          */
-        private boolean mActionModeClosedByDrawer = false;
+        private boolean mActionModeClosedByDrawer;
 
         /**
          * Selected items in list when action mode is closed by drawer
          */
-        private HashSet<OCFile> mSelectionWhenActionModeClosedByDrawer = new HashSet<>();
+        private Set<OCFile> mSelectionWhenActionModeClosedByDrawer = new HashSet<>();
 
         @Override
         public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
@@ -487,7 +506,6 @@ public class OCFileListFragment extends ExtendedListFragment implements
             }
         }
 
-
         /**
          * Update action mode bar when an item is selected / unselected in the list
          */
@@ -512,7 +530,7 @@ public class OCFileListFragment extends ExtendedListFragment implements
             ThemeUtils.colorToolbarProgressBar(getActivity(), mProgressBarActionModeColor);
 
             // hide FAB in multi selection mode
-            setFabEnabled(false);
+            setFabVisible(false);
 
             mAdapter.setMultiSelect(true);
             return true;
@@ -561,7 +579,7 @@ public class OCFileListFragment extends ExtendedListFragment implements
 
             // show FAB on multi selection mode exit
             if (!mHideFab && !searchFragment) {
-                setFabEnabled(true);
+                setFabVisible(true);
             }
 
             mAdapter.setMultiSelect(false);
@@ -894,7 +912,7 @@ public class OCFileListFragment extends ExtendedListFragment implements
             return false;
         }
 
-        if (checkedFiles.size() == 1) {
+        if (checkedFiles.size() == SINGLE_SELECTION) {
             /// action only possible on a single file
             OCFile singleFile = checkedFiles.iterator().next();
             switch (menuId) {
@@ -947,6 +965,7 @@ public class OCFileListFragment extends ExtendedListFragment implements
             case R.id.action_download_file:
             case R.id.action_sync_file: {
                 mContainerActivity.getFileOperationsHelper().syncFiles(checkedFiles);
+                exitSelectionMode();
                 return true;
             }
             case R.id.action_cancel_sync: {
@@ -955,10 +974,12 @@ public class OCFileListFragment extends ExtendedListFragment implements
             }
             case R.id.action_keep_files_offline: {
                 mContainerActivity.getFileOperationsHelper().toggleOfflineFiles(checkedFiles, true);
+                exitSelectionMode();
                 return true;
             }
             case R.id.action_unset_keep_files_offline: {
                 mContainerActivity.getFileOperationsHelper().toggleOfflineFiles(checkedFiles, false);
+                exitSelectionMode();
                 return true;
             }
             case R.id.action_favorite: {
@@ -1018,7 +1039,7 @@ public class OCFileListFragment extends ExtendedListFragment implements
     public void refreshDirectory() {
         searchFragment = false;
 
-        setFabEnabled(true);
+        setFabVisible(true);
         listDirectory(getCurrentFile(), MainApp.isOnlyOnDevice(), false);
     }
 
@@ -1092,6 +1113,9 @@ public class OCFileListFragment extends ExtendedListFragment implements
         } else {
             switchToListView();
         }
+
+        // FAB
+        setFabEnabled(mFile.canWrite());
 
         invalidateActionMode();
     }
@@ -1302,7 +1326,7 @@ public class OCFileListFragment extends ExtendedListFragment implements
         getActivity().getIntent().removeExtra(OCFileListFragment.SEARCH_EVENT);
         getArguments().putParcelable(OCFileListFragment.SEARCH_EVENT, null);
 
-        setFabEnabled(true);
+        setFabVisible(true);
     }
 
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
@@ -1349,7 +1373,7 @@ public class OCFileListFragment extends ExtendedListFragment implements
         setEmptyListLoadingMessage();
         mAdapter.setData(new ArrayList<>(), SearchType.NO_SEARCH, mContainerActivity.getStorageManager(), mFile);
 
-        setFabEnabled(false);
+        setFabVisible(false);
 
         if (event.getUnsetType().equals(SearchEvent.UnsetType.UNSET_BOTTOM_NAV_BAR)) {
             unsetAllMenuItems(false);
@@ -1578,5 +1602,14 @@ public class OCFileListFragment extends ExtendedListFragment implements
         }
 
         mActiveActionMode.invalidate();        
+    }
+
+    /**
+     * Exits the multi file selection mode.
+     */
+    public void exitSelectionMode() {
+        if (mActiveActionMode != null) {
+            mActiveActionMode.finish();
+        }
     }
 }

@@ -3,9 +3,6 @@
     <string name="about_android">%1$s Android 應用程式</string>
     <string name="about_version">版本 %1$s</string>
     <string name="actionbar_sync">更新帳戶</string>
-    <string name="actionbar_upload">上傳</string>
-    <string name="actionbar_upload_from_apps">其他應用程式的內容</string>
-    <string name="actionbar_upload_files">檔案</string>
     <string name="actionbar_open_with">開啟方式</string>
     <string name="actionbar_mkdir">新資料夾</string>
     <string name="actionbar_settings">設定</string>
@@ -34,9 +31,16 @@
     <string name="drawer_item_activities">活動</string>
     <string name="drawer_item_notifications">通知</string>
     <string name="drawer_quota">在  %2$s中使用了%1$s </string>
-	<string name="prefs_category_general">一般</string>
+    <string name="drawer_quota_unlimited">%1$s已使用</string>
+	<string name="drawer_close">關閉側邊攔</string>
+    <string name="drawer_open">開啟側邊攔</string>
+    <string name="prefs_category_general">一般</string>
     <string name="prefs_category_more">更多</string>
     <string name="prefs_manage_accounts">管理帳戶</string>
+    <string name="prefs_lock">鎖定</string>
+    <string name="prefs_lock_title">使用上鎖</string>
+    <string name="prefs_lock_none">無</string>
+    <string name="prefs_lock_using_passcode">通行碼</string>
     <string name="prefs_expert_mode">專家模式</string>
     <string name="prefs_show_hidden_files">顯示隱藏檔案</string>
     <string name="prefs_log_delete_history_button">刪除記錄</string>
@@ -60,7 +64,6 @@
     <string name="auth_host_url">伺服器位址 https://…</string>
     <string name="auth_username">使用者名稱</string>
     <string name="auth_password">密碼</string>
-    <string name="auth_register">還沒有 Nextcloud？\n點選這裡來選擇供應商</string>
     <string name="sync_string_files">檔案</string>
     <string name="setup_btn_connect">連線</string>
     <string name="uploader_btn_upload_text">上傳</string>
@@ -322,7 +325,6 @@
     <string name="activity_chooser_send_file_title">寄出</string>
 
     <string name="copy_link">複製連結</string>
-    <string name="clipboard_text_copied">複製至剪貼簿中</string>
     <string name="clipboard_no_text_to_copy">無任何文字複製到剪貼簿。</string>
     <string name="clipboard_label">文字已由 %1$s 複製</string>
 
@@ -457,14 +459,6 @@
     <string name="upload_file_dialog_filename">檔案名稱</string>
     <string name="upload_file_dialog_filetype">檔案類型</string>
     <string name="storage_description_default">預設</string>
-
-    <!-- Welcome to Nc intro features -->
-    <string name="welcome_feature_1_title">您資料的安全屋</string>
-    <string name="welcome_feature_2_title">分身</string>
-    <string name="welcome_feature_2_text">連接您的所有的雲端</string>
-
-    <string name="welcome_feature_3_title">自動上傳</string>
-    <string name="welcome_feature_3_text">安全保存您的相片</string>
 
     <string name="whats_new_skip">略過</string>
 

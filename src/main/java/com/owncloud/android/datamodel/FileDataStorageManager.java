@@ -455,7 +455,7 @@ public class FileDataStorageManager {
         cv.put(ProviderTableMeta.FILE_PUBLIC_LINK, folder.getPublicLink());
         cv.put(ProviderTableMeta.FILE_PERMISSIONS, folder.getPermissions());
         cv.put(ProviderTableMeta.FILE_REMOTE_ID, folder.getRemoteId());
-        cv.put(ProviderTableMeta.FILE_FAVORITE, folder.getIsFavorite());
+        cv.put(ProviderTableMeta.FILE_FAVORITE, folder.isFavorite());
         cv.put(ProviderTableMeta.FILE_IS_ENCRYPTED, folder.isEncrypted());
         return cv;
     }
@@ -487,7 +487,7 @@ public class FileDataStorageManager {
         cv.put(ProviderTableMeta.FILE_UPDATE_THUMBNAIL, file.needsUpdateThumbnail());
         cv.put(ProviderTableMeta.FILE_IS_DOWNLOADING, file.isDownloading());
         cv.put(ProviderTableMeta.FILE_ETAG_IN_CONFLICT, file.getEtagInConflict());
-        cv.put(ProviderTableMeta.FILE_FAVORITE, file.getIsFavorite());
+        cv.put(ProviderTableMeta.FILE_FAVORITE, file.isFavorite());
         cv.put(ProviderTableMeta.FILE_IS_ENCRYPTED, file.isEncrypted());
         cv.put(ProviderTableMeta.FILE_MOUNT_TYPE, file.getMountType().ordinal());
         return cv;
@@ -557,7 +557,7 @@ public class FileDataStorageManager {
     }
 
     private boolean removeFolderInDb(OCFile folder) {
-        Uri folder_uri = Uri.withAppendedPath(ProviderTableMeta.CONTENT_URI_DIR, "" + folder.getFileId()); // URI
+        Uri folder_uri = Uri.withAppendedPath(ProviderTableMeta.CONTENT_URI_DIR, String.valueOf(folder.getFileId())); // URI
         // for recursive deletion
         String where = ProviderTableMeta.FILE_ACCOUNT_OWNER + AND + ProviderTableMeta.FILE_PATH + "=?";
         String[] whereArgs = new String[]{mAccount.name, folder.getRemotePath()};
@@ -766,7 +766,8 @@ public class FileDataStorageManager {
         }
     }
 
-    public void migrateStoredFiles(String srcPath, String dstPath) throws Exception {
+    public void migrateStoredFiles(String srcPath, String dstPath)
+            throws RemoteException, OperationApplicationException {
         Cursor cursor;
         try {
             if (getContentResolver() != null) {
@@ -1398,7 +1399,7 @@ public class FileDataStorageManager {
                 cv.put(ProviderTableMeta.FILE_PUBLIC_LINK, file.getPublicLink());
                 cv.put(ProviderTableMeta.FILE_PERMISSIONS, file.getPermissions());
                 cv.put(ProviderTableMeta.FILE_REMOTE_ID, file.getRemoteId());
-                cv.put(ProviderTableMeta.FILE_FAVORITE, file.getIsFavorite());
+                cv.put(ProviderTableMeta.FILE_FAVORITE, file.isFavorite());
                 cv.put(
                         ProviderTableMeta.FILE_UPDATE_THUMBNAIL,
                         file.needsUpdateThumbnail() ? 1 : 0
@@ -1465,8 +1466,8 @@ public class FileDataStorageManager {
         }
     }
 
-    public void saveSharesDB(ArrayList<OCShare> shares) {
-        ArrayList<ContentProviderOperation> operations = new ArrayList<ContentProviderOperation>();
+    public void saveSharesDB(List<OCShare> shares) {
+        ArrayList<ContentProviderOperation> operations = new ArrayList<>();
 
         // Reset flags & Remove shares for this files
         String filePath = "";
@@ -1580,7 +1581,7 @@ public class FileDataStorageManager {
      * @return
      */
     private ArrayList<ContentProviderOperation> prepareInsertShares(
-            ArrayList<OCShare> shares, ArrayList<ContentProviderOperation> operations) {
+            List<OCShare> shares, ArrayList<ContentProviderOperation> operations) {
 
         if (shares != null) {
             // prepare operations to insert or update files to save in the given folder
@@ -1663,23 +1664,22 @@ public class FileDataStorageManager {
                 + " (" + ProviderTableMeta.OCSHARES_SHARE_TYPE + "=? OR "
                 + ProviderTableMeta.OCSHARES_SHARE_TYPE + "=? OR "
                 + ProviderTableMeta.OCSHARES_SHARE_TYPE + "=? OR "
+                + ProviderTableMeta.OCSHARES_SHARE_TYPE + "=? OR "
                 + ProviderTableMeta.OCSHARES_SHARE_TYPE + "=? ) ";
         String[] whereArgs = new String[]{filePath, accountName,
                 Integer.toString(ShareType.USER.getValue()),
                 Integer.toString(ShareType.GROUP.getValue()),
                 Integer.toString(ShareType.EMAIL.getValue()),
-                Integer.toString(ShareType.FEDERATED.getValue())};
+                Integer.toString(ShareType.FEDERATED.getValue()),
+                Integer.toString(ShareType.ROOM.getValue())};
 
         Cursor cursor = null;
         if (getContentResolver() != null) {
-            cursor = getContentResolver().query(
-                    ProviderTableMeta.CONTENT_URI_SHARE,
-                    null, where, whereArgs, null);
+            cursor = getContentResolver().query(ProviderTableMeta.CONTENT_URI_SHARE, null, where, whereArgs, null);
         } else {
             try {
-                cursor = getContentProviderClient().query(
-                        ProviderTableMeta.CONTENT_URI_SHARE,
-                        null, where, whereArgs, null);
+                cursor = getContentProviderClient().query(ProviderTableMeta.CONTENT_URI_SHARE, null, where,
+                        whereArgs, null);
 
             } catch (RemoteException e) {
                 Log_OC.e(TAG, "Could not get list of shares with: " + e.getMessage(), e);
@@ -1949,6 +1949,7 @@ public class FileDataStorageManager {
                 .getValue());
         cv.put(ProviderTableMeta.CAPABILITIES_SERVER_BACKGROUND_PLAIN, capability.getServerBackgroundPlain()
                 .getValue());
+        cv.put(ProviderTableMeta.CAPABILITIES_ACTIVITY, capability.isActivityEnabled().getValue());
 
         if (capabilityExists(mAccount.name)) {
             if (getContentResolver() != null) {
@@ -2102,6 +2103,8 @@ public class FileDataStorageManager {
                     c.getInt(c.getColumnIndex(ProviderTableMeta.CAPABILITIES_SERVER_BACKGROUND_DEFAULT))));
             capability.setServerBackgroundPlain(CapabilityBooleanType.fromValue(
                     c.getInt(c.getColumnIndex(ProviderTableMeta.CAPABILITIES_SERVER_BACKGROUND_PLAIN))));
+            capability.setActivity(CapabilityBooleanType.fromValue(
+                    c.getInt(c.getColumnIndex(ProviderTableMeta.CAPABILITIES_ACTIVITY))));
         }
         return capability;
     }

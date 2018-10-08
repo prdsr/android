@@ -433,12 +433,12 @@ public class FileDetailFragment extends FileFragment implements OnClickListener 
                 break;
             }
             case R.id.favorite: {
-                if (getFile().getIsFavorite()) {
+                if (getFile().isFavorite()) {
                     mContainerActivity.getFileOperationsHelper().toggleFavoriteFile(getFile(), false);
                 } else {
                     mContainerActivity.getFileOperationsHelper().toggleFavoriteFile(getFile(), true);
                 }
-                setFavoriteIconStatus(!getFile().getIsFavorite());
+                setFavoriteIconStatus(!getFile().isFavorite());
                 break;
             }
             case R.id.overflow_menu: {
@@ -503,15 +503,14 @@ public class FileDetailFragment extends FileFragment implements OnClickListener 
             fileSize.setText(DisplayUtils.bytesToHumanReadable(file.getFileLength()));
             fileModifiedTimestamp.setText(DisplayUtils.getRelativeTimestamp(getContext(), file.getModificationTimestamp()));
             setFilePreview(file);
-            setFavoriteIconStatus(file.getIsFavorite());
+            setFavoriteIconStatus(file.isFavorite());
 
             // configure UI for depending upon local state of the file
             FileDownloaderBinder downloaderBinder = mContainerActivity.getFileDownloaderBinder();
             FileUploaderBinder uploaderBinder = mContainerActivity.getFileUploaderBinder();
-            if (transferring ||
-                    (downloaderBinder != null && downloaderBinder.isDownloading(account, file)) ||
-                    (uploaderBinder != null && uploaderBinder.isUploading(account, file))
-                    ) {
+            if (transferring
+                    || (downloaderBinder != null && downloaderBinder.isDownloading(account, file))
+                    || (uploaderBinder != null && uploaderBinder.isUploading(account, file))) {
                 setButtonsForTransferring();
 
             } else if (file.isDown()) {
@@ -544,7 +543,7 @@ public class FileDetailFragment extends FileFragment implements OnClickListener 
      * @return 'True' when the fragment is ready to show details of a file
      */
     private boolean readyToShow() {
-        return (getFile() != null && account != null && layout == R.layout.file_details_fragment);
+        return getFile() != null && account != null && layout == R.layout.file_details_fragment;
     }
 
     /**
@@ -578,7 +577,7 @@ public class FileDetailFragment extends FileFragment implements OnClickListener 
                 if (ThumbnailsCacheManager.cancelPotentialThumbnailWork(getFile(), activity.getPreviewImageView()) &&
                         mContainerActivity.getStorageManager() != null) {
                     final ThumbnailsCacheManager.ResizedImageGenerationTask task =
-                            new ThumbnailsCacheManager.ResizedImageGenerationTask(FileDetailFragment.this,
+                            new ThumbnailsCacheManager.ResizedImageGenerationTask(this,
                                     activity.getPreviewImageView(),
                                     mContainerActivity.getStorageManager(),
                                     mContainerActivity.getStorageManager().getAccount());
@@ -677,7 +676,7 @@ public class FileDetailFragment extends FileFragment implements OnClickListener 
      * Helper class responsible for updating the progress bar shown for file downloading.
      */
     private class ProgressListener implements OnDatatransferProgressListener {
-        private int lastPercent = 0;
+        private int lastPercent;
         private WeakReference<ProgressBar> progressBarReference;
 
         ProgressListener(ProgressBar progressBar) {

@@ -3,9 +3,6 @@
     <string name="about_android">%1$s Android lietotne</string>
     <string name="about_version">versija %1$s</string>
     <string name="actionbar_sync">Atsvaidzināt kontu</string>
-    <string name="actionbar_upload">Augšupielādēt</string>
-    <string name="actionbar_upload_from_apps">Saturs no citām programmām</string>
-    <string name="actionbar_upload_files">Datnes</string>
     <string name="actionbar_open_with">Atvērt ar</string>
     <string name="actionbar_mkdir">Jauna mape</string>
     <string name="actionbar_settings">Iestatījumi</string>
@@ -34,7 +31,7 @@
     <string name="drawer_item_activities">Izmaiņas</string>
     <string name="drawer_item_notifications">Paziņojumi</string>
     <string name="drawer_quota">%1$s no %2$s lietoti</string>
-	<string name="drawer_close">Aizvērt malu</string>
+    <string name="drawer_close">Aizvērt malu</string>
     <string name="drawer_open">Atvērt malu</string>
     <string name="prefs_category_general">Vispārīgi</string>
     <string name="prefs_category_more">Vairāk</string>
@@ -61,7 +58,6 @@
     <string name="auth_host_url">Servera adrese https://…</string>
     <string name="auth_username">Lietotājvārds</string>
     <string name="auth_password">Parole</string>
-    <string name="auth_register">Nav vēl Nextcloud?\nSpied šeit lai iegūtu vienu no kāda pakalpojumu sniedzēja</string>
     <string name="sync_string_files">Datnes</string>
     <string name="setup_btn_connect">Savienoties</string>
     <string name="uploader_btn_upload_text">Augšupielādēt</string>
@@ -331,7 +327,6 @@
     <string name="activity_chooser_send_file_title">Sūtīt</string>
 
     <string name="copy_link">Kopēt saiti</string>
-    <string name="clipboard_text_copied">Nokopēts starpliktuvē</string>
     <string name="clipboard_no_text_to_copy">Nav teksta, ko saglabāt starpliktuvē</string>
     <string name="clipboard_unexpected_error">Kopējot starpliktuvē, radās neparedzēta kļūda</string>
     <string name="clipboard_label">Teksts kopēts no %1$s</string>
@@ -542,19 +537,6 @@
 
     <!-- What's new feature and texts to show -->
     <string name="whats_new_title">Jaunums %1$s</string>
-
-    <!-- Welcome to Nc intro features -->
-    <string name="welcome_feature_1_title">Droša vieta visiem jūsu datiem</string>
-    <string name="welcome_feature_2_title">Multi konts</string>
-    <string name="welcome_feature_2_text">Savienoties ar visiem mākoņiem</string>
-
-    <string name="welcome_feature_3_title">Automātiska augšupielāde</string>
-    <string name="welcome_feature_3_text">Glabājiet savus fotoattēlus drošībā</string>
-
-    <string name="whats_new_end_to_end_encryption_title">No gala līdz galam šifrēšana</string>
-    <string name="whats_new_ipv6_title">IPv6 atbalsts</string>
-    <string name="whats_new_ipv6_content">IPv6 kad serveris to atbalsta, IPv4 ja nē.</string>
-
     <string name="whats_new_skip">Izlaist</string>
 
     <!-- User information -->

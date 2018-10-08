@@ -36,16 +36,18 @@ import static com.owncloud.android.ui.fragment.OCFileListFragment.FOLDER_LAYOUT_
 /**
  * Helper to simplify reading of Preferences all around the app
  */
-public abstract class PreferenceManager {
+public final class PreferenceManager {
     /**
      * Constant to access value of last path selected by the user to upload a file shared from other app.
      * Value handled by the app without direct access in the UI.
      */
     private static final String AUTO_PREF__LAST_UPLOAD_PATH = "last_upload_path";
+    private static final String AUTO_PREF__UPLOAD_FROM_LOCAL_LAST_PATH = "upload_from_local_last_path";
     private static final String AUTO_PREF__UPLOAD_FILE_EXTENSION_MAP_URL = "prefs_upload_file_extension_map_url";
     private static final String AUTO_PREF__UPLOAD_FILE_EXTENSION_URL = "prefs_upload_file_extension_url";
     private static final String AUTO_PREF__UPLOADER_BEHAVIOR = "prefs_uploader_behaviour";
     private static final String AUTO_PREF__GRID_COLUMNS = "grid_columns";
+    public static final String AUTO_PREF__LAST_SEEN_VERSION_CODE = "lastSeenVersionCode";
     private static final String PREF__INSTANT_UPLOADING = "instant_uploading";
     private static final String PREF__INSTANT_VIDEO_UPLOADING = "instant_video_uploading";
     private static final String PREF__INSTANT_UPLOAD_PATH_USE_SUBFOLDERS = "instant_upload_path_use_subfolders";
@@ -63,6 +65,9 @@ public abstract class PreferenceManager {
     private static final String PREF__AUTO_UPLOAD_INIT = "autoUploadInit";
     private static final String PREF__FOLDER_SORT_ORDER = "folder_sort_order";
     private static final String PREF__FOLDER_LAYOUT = "folder_layout";
+
+    private PreferenceManager() {
+    }
 
     public static void setKeysReInit(Context context) {
         saveBooleanPreference(context, PREF__KEYS_REINIT, true);
@@ -180,6 +185,27 @@ public abstract class PreferenceManager {
      */
     public static void setLastUploadPath(Context context, String path) {
         saveStringPreference(context, AUTO_PREF__LAST_UPLOAD_PATH, path);
+    }
+
+    /**
+     * Gets the last local path where the user selected to do an upload from.
+     *
+     * @param context Caller {@link Context}, used to access to shared preferences manager.
+     * @return path     Absolute path to a folder, as previously stored by
+     * {@link #setUploadFromLocalLastPath(Context, String)}, or empty String if never saved before.
+     */
+    public static String getUploadFromLocalLastPath(Context context) {
+        return getDefaultSharedPreferences(context).getString(AUTO_PREF__UPLOAD_FROM_LOCAL_LAST_PATH, "");
+    }
+
+    /**
+     * Saves the path where the user selected to do the last local upload of a file from.
+     *
+     * @param context Caller {@link Context}, used to access to shared preferences manager.
+     * @param path    Absolute path to a folder.
+     */
+    public static void setUploadFromLocalLastPath(Context context, String path) {
+        saveStringPreference(context, AUTO_PREF__UPLOAD_FROM_LOCAL_LAST_PATH, path);
     }
 
     /**
@@ -423,6 +449,26 @@ public abstract class PreferenceManager {
      */
     public static void setGridColumns(Context context, float gridColumns) {
         saveFloatPreference(context, AUTO_PREF__GRID_COLUMNS, gridColumns);
+    }
+
+    /**
+     * Gets the last seen version code right before updating.
+     *
+     * @param context Caller {@link Context}, used to access to shared preferences manager.
+     * @return grid columns     grid columns
+     */
+    public static int getLastSeenVersionCode(Context context) {
+        return getDefaultSharedPreferences(context).getInt(AUTO_PREF__LAST_SEEN_VERSION_CODE, 0);
+    }
+
+    /**
+     * Saves the version code as the last seen version code.
+     *
+     * @param context   Caller {@link Context}, used to access to shared preferences manager.
+     * @param versionCode the app's version code
+     */
+    public static void setLastSeenVersionCode(Context context, int versionCode) {
+        saveIntPreference(context, AUTO_PREF__LAST_SEEN_VERSION_CODE, versionCode);
     }
 
     private static void saveBooleanPreference(Context context, String key, boolean value) {

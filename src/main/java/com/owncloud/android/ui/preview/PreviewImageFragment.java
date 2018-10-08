@@ -65,6 +65,7 @@ import com.owncloud.android.ui.dialog.RemoveFilesDialogFragment;
 import com.owncloud.android.ui.fragment.FileFragment;
 import com.owncloud.android.utils.BitmapUtils;
 import com.owncloud.android.utils.DisplayUtils;
+import com.owncloud.android.utils.MimeType;
 import com.owncloud.android.utils.MimeTypeUtil;
 
 import java.io.FileInputStream;
@@ -113,7 +114,7 @@ public class PreviewImageFragment extends FileFragment {
 
     private boolean mIgnoreFirstSavedState;
 
-    private LoadBitmapTask mLoadBitmapTask = null;
+    private LoadBitmapTask mLoadBitmapTask;
 
     /**
      * Public factory method to create a new fragment that previews an image.
@@ -247,7 +248,7 @@ public class PreviewImageFragment extends FileFragment {
                     if (ThumbnailsCacheManager.cancelPotentialThumbnailWork(getFile(), mImageView) &&
                             mContainerActivity.getStorageManager() != null) {
                         final ThumbnailsCacheManager.ResizedImageGenerationTask task =
-                                new ThumbnailsCacheManager.ResizedImageGenerationTask(PreviewImageFragment.this,
+                                new ThumbnailsCacheManager.ResizedImageGenerationTask(this,
                                         mImageView,
                                         mContainerActivity.getStorageManager(),
                                         mContainerActivity.getStorageManager().getAccount());
@@ -411,6 +412,7 @@ public class PreviewImageFragment extends FileFragment {
 
 
     private class LoadBitmapTask extends AsyncTask<OCFile, Void, LoadImage> {
+        private static final int PARAMS_LENGTH = 1;
 
         /**
          * Weak reference to the target {@link ImageView} where the bitmap will be loaded into.
@@ -421,7 +423,7 @@ public class PreviewImageFragment extends FileFragment {
         private final WeakReference<PhotoView> mImageViewRef;
 
         /**
-         * Error message to show when a load fails
+         * Error message to show when a load fails.
          */
         private int mErrorMessageId;
 
@@ -439,12 +441,12 @@ public class PreviewImageFragment extends FileFragment {
         protected LoadImage doInBackground(OCFile... params) {
             Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND + Process.THREAD_PRIORITY_MORE_FAVORABLE);
 
-            Bitmap bitmapResult = null;
-            Drawable drawableResult = null;
-
-            if (params.length != 1) {
+            if (params.length != PARAMS_LENGTH) {
                 return null;
             }
+
+            Bitmap bitmapResult = null;
+            Drawable drawableResult = null;
             OCFile ocFile = params[0];
             String storagePath = ocFile.getStoragePath();
             try {
@@ -492,7 +494,7 @@ public class PreviewImageFragment extends FileFragment {
                                 Log_OC.e(TAG, "File could not be loaded as a bitmap: " + storagePath);
                                 break;
                             } else {
-                                if ("image/jpeg".equalsIgnoreCase(ocFile.getMimeType())) {
+                                if (MimeType.JPEG.equalsIgnoreCase(ocFile.getMimeType())) {
                                     // Rotate image, obeying exif tag.
                                     bitmapResult = BitmapUtils.rotateImage(bitmapResult, storagePath);
                                 }
@@ -553,25 +555,31 @@ public class PreviewImageFragment extends FileFragment {
         private void showLoadedImage(LoadImage result) {
             final PhotoView imageView = mImageViewRef.get();
             Bitmap bitmap = result.bitmap;
+            Drawable drawable = result.drawable;
 
-            if (imageView != null && bitmap != null) {
-                Log_OC.d(TAG, "Showing image with resolution " + bitmap.getWidth() + "x" +
-                        bitmap.getHeight());
+            if (imageView != null) {
+                if (bitmap != null) {
+                    Log_OC.d(TAG, "Showing image with resolution " + bitmap.getWidth() + "x" +
+                            bitmap.getHeight());
 
-                if (MIME_TYPE_PNG.equalsIgnoreCase(result.ocFile.getMimeType()) ||
-                        MIME_TYPE_SVG.equalsIgnoreCase(result.ocFile.getMimeType()) ||
-                        MIME_TYPE_GIF.equalsIgnoreCase(result.ocFile.getMimeType())) {
-                    if (getResources() != null) {
-                        imageView.setImageDrawable(generateCheckerboardLayeredDrawable(result, bitmap));
+                    if (MIME_TYPE_PNG.equalsIgnoreCase(result.ocFile.getMimeType()) ||
+                            MIME_TYPE_GIF.equalsIgnoreCase(result.ocFile.getMimeType())) {
+                        if (getResources() != null) {
+                            imageView.setImageDrawable(generateCheckerboardLayeredDrawable(result, bitmap));
+                        } else {
+                            imageView.setImageBitmap(bitmap);
+                        }
                     } else {
                         imageView.setImageBitmap(bitmap);
                     }
-                } else {
-                    imageView.setImageBitmap(bitmap);
-                }
 
-                imageView.setVisibility(View.VISIBLE);
-                mBitmap = bitmap;  // needs to be kept for recycling when not useful
+                    imageView.setVisibility(View.VISIBLE);
+                    mBitmap = bitmap;  // needs to be kept for recycling when not useful
+                } else if (drawable != null
+                        && MIME_TYPE_SVG.equalsIgnoreCase(result.ocFile.getMimeType())
+                        && getResources() != null) {
+                    imageView.setImageDrawable(generateCheckerboardLayeredDrawable(result, null));
+                }
             }
 
             mMultiView.setVisibility(View.GONE);
@@ -720,7 +728,7 @@ public class PreviewImageFragment extends FileFragment {
                 LayerDrawable layerDrawable = (LayerDrawable) mImageView.getDrawable();
                 Drawable layerOne;
 
-                if (previewImageActivity.getSystemUIVisible()) {
+                if (previewImageActivity.isSystemUIVisible()) {
                     layerOne = getResources().getDrawable(R.color.white);
                 } else {
                     layerOne = getResources().getDrawable(R.drawable.backrepeat);

@@ -24,6 +24,7 @@ package com.owncloud.android.ui.fragment;
 import android.animation.LayoutTransition;
 import android.app.Activity;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.os.Handler;
@@ -101,7 +102,7 @@ public class ExtendedListFragment extends Fragment
     private int maxColumnSizePortrait = 5;
     private int maxColumnSizeLandscape = 10;
 
-    private ScaleGestureDetector mScaleGestureDetector = null;
+    private ScaleGestureDetector mScaleGestureDetector;
     protected SwipeRefreshLayout mRefreshListLayout;
     protected LinearLayout mEmptyListContainer;
     protected TextView mEmptyListMessage;
@@ -115,9 +116,9 @@ public class ExtendedListFragment extends Fragment
     private ArrayList<Integer> mIndexes;
     private ArrayList<Integer> mFirstPositions;
     private ArrayList<Integer> mTops;
-    private int mHeightCell = 0;
+    private int mHeightCell;
 
-    private SwipeRefreshLayout.OnRefreshListener mOnRefreshListener = null;
+    private SwipeRefreshLayout.OnRefreshListener mOnRefreshListener;
 
     private EmptyRecyclerView mRecyclerView;
 
@@ -208,7 +209,7 @@ public class ExtendedListFragment extends Fragment
                         if (getActivity() != null && !(getActivity() instanceof FolderPickerActivity)) {
 
                             if (!(getActivity() instanceof UploadFilesActivity)) {
-                                setFabEnabled(!hasFocus);
+                                setFabVisible(!hasFocus);
                             }
 
                             boolean searchSupported = AccountUtils.hasSearchSupport(AccountUtils.
@@ -298,7 +299,7 @@ public class ExtendedListFragment extends Fragment
                 delay = 0;
             }
 
-            if (adapter != null && adapter instanceof OCFileListAdapter) {
+            if (adapter instanceof OCFileListAdapter) {
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -312,7 +313,7 @@ public class ExtendedListFragment extends Fragment
                         }
                     }
                 }, delay);
-            } else if (adapter != null && adapter instanceof LocalFileListAdapter) {
+            } else if (adapter instanceof LocalFileListAdapter) {
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -588,21 +589,42 @@ public class ExtendedListFragment extends Fragment
 
     /**
      * Sets the 'visibility' state of the FAB contained in the fragment.
-     * <p>
-     * When 'false' is set, FAB visibility is set to View.GONE programmatically,
+     *
+     * When 'false' is set, FAB visibility is set to View.GONE programmatically.
+     *
+     * @param visible Desired visibility for the FAB.
+     */
+    public void setFabVisible(final boolean visible) {
+        if (getActivity() != null) {
+            getActivity().runOnUiThread(() -> {
+                if (visible) {
+                    mFabMain.show();
+                    ThemeUtils.tintDrawable(mFabMain.getBackground(), ThemeUtils.primaryColor(getContext()));
+                } else {
+                    mFabMain.hide();
+                }
+            });
+        }
+    }
+
+    /**
+     * Sets the 'visibility' state of the FAB contained in the fragment.
+     *
+     * When 'false' is set, FAB is greyed out
      *
      * @param enabled Desired visibility for the FAB.
      */
     public void setFabEnabled(final boolean enabled) {
         if (getActivity() != null) {
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    if (enabled) {
-                        mFabMain.setVisibility(View.VISIBLE);
-                    } else {
-                        mFabMain.setVisibility(View.GONE);
-                    }
+            getActivity().runOnUiThread(() -> {
+                mFabMain.show();
+
+                if (enabled) {
+                    mFabMain.setEnabled(true);
+                    ThemeUtils.tintDrawable(mFabMain.getBackground(), ThemeUtils.primaryColor(getContext()));
+                } else {
+                    mFabMain.setEnabled(false);
+                    ThemeUtils.tintDrawable(mFabMain.getBackground(), Color.GRAY);
                 }
             });
         }

@@ -41,9 +41,12 @@ import java.util.Locale;
 /**
  * Utility class with methods for decoding Bitmaps.
  */
-public class BitmapUtils {
+public final class BitmapUtils {
     public static final String TAG = BitmapUtils.class.getSimpleName();
 
+    private BitmapUtils() {
+        // utility class -> private constructor
+    }
 
     /**
      * Decodes a bitmap from a file containing it minimizing the memory use, known that the bitmap
@@ -101,8 +104,7 @@ public class BitmapUtils {
 
             // calculates the largest inSampleSize value (for smallest sample) that is a power of 2 and keeps both
             // height and width **larger** than the requested height and width.
-            while ((halfHeight / inSampleSize) > reqHeight
-                    && (halfWidth / inSampleSize) > reqWidth) {
+            while ((halfHeight / inSampleSize) > reqHeight || (halfWidth / inSampleSize) > reqWidth) {
                 inSampleSize *= 2;
             }
         }
@@ -257,7 +259,7 @@ public class BitmapUtils {
         }
 
         if (3 * h < 2) {
-            return p + ((q - p) * 6 * ((2.0f / 3.0f) - h));
+            return p + ((q - p) * 6 * (2.0f / 3.0f - h));
         }
 
         return p;
@@ -287,13 +289,13 @@ public class BitmapUtils {
 
         // Splitting evenly the string
         for (int i = 0; i < hash.length(); i++) {
-            result[i % modulo] = result[i % modulo] + String.valueOf(Integer.parseInt(hash.substring(i, i + 1), 16));
+            result[i % modulo] = result[i % modulo] + Integer.parseInt(hash.substring(i, i + 1), 16);
         }
 
         // Converting our data into a usable rgb format
         // Start at 1 because 16%3=1 but 15%3=0 and makes the repartition even
         for (int count = 1; count < modulo; count++) {
-            rgb[count % 3] += (Integer.parseInt(result[count]));
+            rgb[count % 3] += Integer.parseInt(result[count]);
         }
 
         // Reduce values bigger than rgb requirements
@@ -376,8 +378,6 @@ public class BitmapUtils {
     }
 
     public static Bitmap drawableToBitmap(Drawable drawable) {
-        Bitmap bitmap;
-
         if (drawable instanceof BitmapDrawable) {
             BitmapDrawable bitmapDrawable = (BitmapDrawable) drawable;
             if (bitmapDrawable.getBitmap() != null) {
@@ -385,6 +385,7 @@ public class BitmapUtils {
             }
         }
 
+        Bitmap bitmap;
         if (drawable.getIntrinsicWidth() <= 0 || drawable.getIntrinsicHeight() <= 0) {
             bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888);
         } else {
