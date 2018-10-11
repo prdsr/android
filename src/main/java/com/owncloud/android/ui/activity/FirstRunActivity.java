@@ -63,21 +63,17 @@ public class FirstRunActivity extends BaseActivity implements ViewPager.OnPageCh
         setContentView(R.layout.first_run_activity);
 
         boolean isProviderOrOwnInstallationVisible = getResources().getBoolean(R.bool.show_provider_or_own_installation);
-        
+
         setSlideshowSize(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE);
 
         Button loginButton = findViewById(R.id.login);
         loginButton.setBackgroundColor(Color.WHITE);
         loginButton.setTextColor(Color.BLACK);
 
+        autoLogIn();
+
         loginButton.setOnClickListener(v -> {
-            if (getIntent().getBooleanExtra(EXTRA_ALLOW_CLOSE, false)) {
-                Intent authenticatorActivityIntent = new Intent(this, AuthenticatorActivity.class);
-                authenticatorActivityIntent.putExtra(AuthenticatorActivity.EXTRA_USE_PROVIDER_AS_WEBLOGIN, false);
-                startActivityForResult(authenticatorActivityIntent, FIRST_RUN_RESULT_CODE);
-            } else {
-                finish();
-            }
+            autoLogIn();
         });
 
         Button providerButton = findViewById(R.id.signup);
@@ -86,7 +82,7 @@ public class FirstRunActivity extends BaseActivity implements ViewPager.OnPageCh
         providerButton.setVisibility(isProviderOrOwnInstallationVisible ? View.VISIBLE : View.GONE);
         providerButton.setOnClickListener(v -> {
             Intent authenticatorActivityIntent = new Intent(this, AuthenticatorActivity.class);
-            authenticatorActivityIntent.putExtra(AuthenticatorActivity.EXTRA_USE_PROVIDER_AS_WEBLOGIN, true);
+            //authenticatorActivityIntent.putExtra(AuthenticatorActivity.EXTRA_USE_PROVIDER_AS_WEBLOGIN, true);
 
             if (getIntent().getBooleanExtra(EXTRA_ALLOW_CLOSE, false)) {
                 startActivityForResult(authenticatorActivityIntent, FIRST_RUN_RESULT_CODE);
@@ -119,6 +115,16 @@ public class FirstRunActivity extends BaseActivity implements ViewPager.OnPageCh
         viewPager.setAdapter(featuresViewAdapter);
 
         viewPager.addOnPageChangeListener(this);
+    }
+
+    private void autoLogIn(){
+        if (getIntent().getBooleanExtra(EXTRA_ALLOW_CLOSE, false)) {
+            Intent authenticatorActivityIntent = new Intent(this, AuthenticatorActivity.class);
+            //authenticatorActivityIntent.putExtra(AuthenticatorActivity.EXTRA_USE_PROVIDER_AS_WEBLOGIN, false);
+            startActivityForResult(authenticatorActivityIntent, FIRST_RUN_RESULT_CODE);
+        } else {
+            finish();
+        }
     }
 
     private void setSlideshowSize(boolean isLandscape) {
@@ -181,7 +187,7 @@ public class FirstRunActivity extends BaseActivity implements ViewPager.OnPageCh
         if (!isProviderOrOwnInstallationVisible) {
             return false;
         }
-        
+
         if (context instanceof FirstRunActivity) {
             return false;
         }
@@ -224,7 +230,7 @@ public class FirstRunActivity extends BaseActivity implements ViewPager.OnPageCh
                 DisplayUtils.showSnackMessage(this, R.string.account_creation_failed);
                 return;
             }
-            
+
             setAccount(account);
             AccountUtils.setCurrentOwnCloudAccount(this, account.name);
             onAccountSet(false);
